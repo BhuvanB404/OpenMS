@@ -128,6 +128,18 @@ namespace OpenMS
       position_ = position;
     }
 
+    /// Alias for getIM()
+    inline CoordinateType getMZ() const
+    {
+      return position_[0];
+    }
+
+    /// Alias for setIM()
+    inline void setMZ(CoordinateType im)
+    {
+      position_[0] = im;
+    }
+
     ///@}
 
     /// Equality operator
