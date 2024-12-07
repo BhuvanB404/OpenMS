@@ -47,7 +47,9 @@ namespace OpenMS
       "NORM_RT REAL NOT NULL," \
       "DELTA_RT REAL NOT NULL," \
       "LEFT_WIDTH REAL NOT NULL," \
-      "RIGHT_WIDTH REAL NOT NULL); " \
+      "RIGHT_WIDTH REAL NOT NULL," \
+      "EXP_IM_LEFTWIDTH REAL," \
+      "EXP_IM_RIGHTWIDTH REAL); " \
 
       // MS1-level scores
       "CREATE TABLE FEATURE_MS1(" \
@@ -77,6 +79,8 @@ namespace OpenMS
       "TOTAL_AREA_INTENSITY REAL NOT NULL," \
       "APEX_INTENSITY REAL NOT NULL," \
       "EXP_IM REAL," \
+      "EXP_IM_LEFTWIDTH REAL," \
+      "EXP_IM_RIGHTWIDTH REAL," \
       "DELTA_IM REAL," \
       "TOTAL_MI REAL NULL," \
       "VAR_BSERIES_SCORE REAL NULL," \
@@ -107,7 +111,8 @@ namespace OpenMS
 
       "VAR_IM_XCORR_SHAPE REAL NULL," \
       "VAR_IM_XCORR_COELUTION REAL NULL," \
-      "VAR_IM_DELTA_SCORE REAL NULL);" \
+      "VAR_IM_DELTA_SCORE REAL NULL," \
+      "VAR_IM_LOG_INTENSITY REAL NULL);" \
 
       "CREATE TABLE FEATURE_PRECURSOR(" \
       "FEATURE_ID INT NOT NULL," \
@@ -294,7 +299,7 @@ namespace OpenMS
       if (feature_it.metaValueExists("norm_RT") ) norm_rt = feature_it.getMetaValue("norm_RT");
       if (feature_it.metaValueExists("delta_rt") ) delta_rt = feature_it.getMetaValue("delta_rt");
 
-      sql_feature << "INSERT INTO FEATURE (ID, RUN_ID, PRECURSOR_ID, EXP_RT, EXP_IM, NORM_RT, DELTA_RT, LEFT_WIDTH, RIGHT_WIDTH) VALUES ("
+      sql_feature << "INSERT INTO FEATURE (ID, RUN_ID, PRECURSOR_ID, EXP_RT, EXP_IM, NORM_RT, DELTA_RT, LEFT_WIDTH, RIGHT_WIDTH, EXP_IM_LEFTWIDTH, EXP_IM_RIGHTWIDTH) VALUES ("
                   << feature_id << ", "
                   << run_id_ << ", "
                   << id << ", "
@@ -303,10 +308,12 @@ namespace OpenMS
                   << norm_rt << ", "
                   << delta_rt << ", "
                   << feature_it.getMetaValue("leftWidth") << ", "
-                  << feature_it.getMetaValue("rightWidth") << "); ";
+                  << feature_it.getMetaValue("rightWidth") << ", "
+                  << getScore(feature_it, "im_drift_left") << ", "
+                  << getScore(feature_it, "im_drift_right") << "); ";
 
       sql_feature_ms2 << "INSERT INTO FEATURE_MS2 " \
-        "(FEATURE_ID, AREA_INTENSITY, TOTAL_AREA_INTENSITY, APEX_INTENSITY, EXP_IM, DELTA_IM, TOTAL_MI, "\
+        "(FEATURE_ID, AREA_INTENSITY, TOTAL_AREA_INTENSITY, APEX_INTENSITY, EXP_IM, EXP_IM_LEFTWIDTH, EXP_IM_RIGHTWIDTH, DELTA_IM, TOTAL_MI, "\
         "VAR_BSERIES_SCORE, VAR_DOTPROD_SCORE, VAR_INTENSITY_SCORE, " \
         "VAR_ISOTOPE_CORRELATION_SCORE, VAR_ISOTOPE_OVERLAP_SCORE, VAR_LIBRARY_CORR,  "\
         "VAR_LIBRARY_DOTPROD, VAR_LIBRARY_MANHATTAN, VAR_LIBRARY_RMSD, VAR_LIBRARY_ROOTMEANSQUARE, "\
@@ -314,13 +321,15 @@ namespace OpenMS
         "VAR_MI_SCORE, VAR_MI_WEIGHTED_SCORE, VAR_MI_RATIO_SCORE, VAR_NORM_RT_SCORE, "\
         "VAR_XCORR_COELUTION,VAR_XCORR_COELUTION_WEIGHTED, VAR_XCORR_SHAPE, "\
         "VAR_XCORR_SHAPE_WEIGHTED, VAR_YSERIES_SCORE, VAR_ELUTION_MODEL_FIT_SCORE, "\
-        "VAR_IM_XCORR_SHAPE, VAR_IM_XCORR_COELUTION, VAR_IM_DELTA_SCORE"
+        "VAR_IM_XCORR_SHAPE, VAR_IM_XCORR_COELUTION, VAR_IM_DELTA_SCORE, VAR_IM_LOG_INTENSITY"
         << ") VALUES ("
                       << feature_id << ", "
                       << feature_it.getIntensity() << ", "
                       << getScore(feature_it, "total_xic") << ", "
                       << getScore(feature_it, "peak_apices_sum") << ", "
                       << getScore(feature_it, "im_drift") << ", "
+                      << getScore(feature_it, "im_drift_left") << ", "
+                      << getScore(feature_it, "im_drift_right") << ", "
                       << getScore(feature_it, "im_delta") << ", "
                       << getScore(feature_it, "total_mi") << ", "
                       << getScore(feature_it, "var_bseries_score") << ", "
@@ -350,7 +359,8 @@ namespace OpenMS
                       << getScore(feature_it, "var_elution_model_fit_score") << ", "
                       << getScore(feature_it, "var_im_xcorr_shape") << ", "
                       << getScore(feature_it, "var_im_xcorr_coelution") << ", "
-                      << getScore(feature_it, "var_im_delta_score");
+                      << getScore(feature_it, "var_im_delta_score") << ", "
+                      << getScore(feature_it, "im_log_intensity");
       sql_feature_ms2 << "); ";
 
       bool enable_ms1 = feature_it.metaValueExists("var_ms1_ppm_diff");
