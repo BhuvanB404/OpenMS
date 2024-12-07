@@ -21,6 +21,7 @@
 #include <OpenMS/MATH/StatisticFunctions.h>
 #include <OpenMS/ANALYSIS/OPENSWATH/SpectrumAddition.h>
 #include <OpenMS/ANALYSIS/OPENSWATH/DIAHelper.h>
+#include <OpenMS/ANALYSIS/OPENSWATH/PeakPickerMobilogram.h>
 
 // #define DEBUG_IMSCORING
 
@@ -200,6 +201,141 @@ namespace OpenMS
     }
   }
 
+  OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms) 
+  {
+    if (aligned_mobilograms.empty()) {
+      return OpenMS::Mobilogram();
+    }
+
+    OpenMS::Mobilogram summed_mobilogram;
+
+    // Use the first mobilogram to set the structure
+    const auto& first_mobilogram = aligned_mobilograms[0];
+
+    for (size_t j = 0; j < first_mobilogram.size(); ++j) {
+      OpenMS::MobilityPeak1D summed_peak;
+      summed_peak.setMobility(first_mobilogram[j].getMobility());
+      summed_peak.setIntensity(0.0); 
+
+      // Sum intensities from all mobilograms
+      for (const auto& mobilogram : aligned_mobilograms) {
+        if (j < mobilogram.size()) {
+          summed_peak.setIntensity(summed_peak.getIntensity() + mobilogram[j].getIntensity());
+        }
+      }
+
+      summed_mobilogram.push_back(summed_peak);
+    }
+
+    // Concatenate names of all mobilograms
+    std::string concatenated_name;
+    for (size_t i = 0; i < aligned_mobilograms.size(); ++i) {
+      if (i > 0) {
+        concatenated_name += "|";
+      }
+      concatenated_name += aligned_mobilograms[i].getName();
+    }
+
+    // Set the concatenated name for the summed mobilogram
+    summed_mobilogram.setName(concatenated_name);
+
+    return summed_mobilogram;
+  }
+
+  std::tuple<size_t, size_t, size_t> findHighestPeak(const PeakPickerMobilogram& picker) 
+  {
+    const auto& intensities = picker.integrated_intensities_;
+
+    // Check if vectors are empty or of different sizes
+    if (intensities.empty() ||
+        intensities.size() != picker.left_width_.size() ||
+        intensities.size() != picker.right_width_.size()) {
+      // Return an "invalid" tuple if there's an issue
+      return std::make_tuple(std::numeric_limits<size_t>::max(), 0, 0);
+    }
+
+    // Find the iterator pointing to the maximum element
+    auto max_it = std::max_element(intensities.begin(), intensities.end());
+
+    // Get the index of the maximum element
+    size_t max_index = std::distance(intensities.begin(), max_it);
+
+    // Return the tuple
+    return std::make_tuple(max_index,
+                            picker.left_width_[max_index],
+                            picker.right_width_[max_index]);
+  }
+
+  void filterPeakIntensities(OpenMS::Mobilogram& mobilogram,
+                               size_t left_index,
+                               size_t right_index) 
+  {
+    // Check if indices are valid (indicating peaks were found)
+    bool peaksFound = (left_index != std::numeric_limits<size_t>::max() &&
+                        right_index != 0 &&
+                        left_index <= right_index);
+
+    // If no peaks were found, return without filtering
+    if (!peaksFound) {
+      return; 
+    }
+
+    // Create a temporary vector to hold the filtered peaks
+    std::vector<OpenMS::MobilityPeak1D> filtered_peaks;
+
+    // Ensure the indices are within bounds
+    size_t start = std::max(left_index, static_cast<size_t>(0));
+    size_t end = std::min(right_index, mobilogram.size() - 1);
+
+    for (size_t i = start; i <= end; ++i) {
+      const auto& peak = mobilogram[i];
+      // Collect the peaks within the range
+      filtered_peaks.push_back(peak); 
+    }
+
+    // Clear existing data and replace with filtered peaks
+    mobilogram.clear();
+    for (const auto& peak : filtered_peaks) {
+      mobilogram.push_back(peak);
+    }
+  }
+
+  void filterPeakIntensities(std::vector<OpenMS::Mobilogram>& mobilograms,
+                               size_t left_index,
+                               size_t right_index) 
+  {
+    // Check if indices are valid (indicating peaks were found)
+    bool peaksFound = (left_index != std::numeric_limits<size_t>::max() &&
+                        right_index != 0 &&
+                        left_index <= right_index);
+
+    // If no peaks were found, return without filtering
+    if (!peaksFound) {
+      return; 
+    }
+
+    for (auto& mobilogram : mobilograms) {
+      // Create a temporary vector to hold the filtered peaks
+      std::vector<OpenMS::MobilityPeak1D> filtered_peaks;
+
+      // Ensure the indices are within bounds
+      size_t start = std::max(left_index, static_cast<size_t>(0));
+      size_t end = std::min(right_index, mobilogram.size() - 1);
+
+      for (size_t i = start; i <= end; ++i) {
+        const auto& peak = mobilogram[i];
+        // Collect the peaks within the range
+        filtered_peaks.push_back(peak); 
+      }
+
+      // Clear existing data and replace with filtered peaks
+      mobilogram.clear(); 
+      for (const auto& peak : filtered_peaks) {
+        mobilogram.push_back(peak);
+      }
+    }
+  }
+
   /// Constructor
   IonMobilityScoring::IonMobilityScoring() = default;
 
@@ -368,7 +504,8 @@ namespace OpenMS
                                         const double dia_extract_window_,
                                         const bool dia_extraction_ppm_,
                                         const bool /* use_spline */,
-                                        const double drift_extra)
+                                        const double drift_extra,
+                                        const bool apply_im_peak_picking)
   {
     OPENMS_PRECONDITION(!spectra.empty(), "Spectra cannot be empty");
     for (auto s:spectra)
@@ -405,6 +542,7 @@ namespace OpenMS
       //double left(transition.getProductMZ()), right(transition.getProductMZ());
       //DIAHelpers::adjustExtractionWindow(right, left, dia_extract_window_, dia_extraction_ppm_);
       computeIonMobilogram(spectra, mz_range, im_range, im, intensity, res, eps);
+      res.setName(transition.getNativeID());
       ms2_mobilograms.push_back(std::move(res));
 
       // TODO what do to about those that have no signal ?
@@ -443,6 +581,7 @@ namespace OpenMS
     scores.im_delta = delta_drift;
     scores.im_drift = computed_im;
     scores.im_drift_weighted = computed_im_weighted;
+    scores.im_log_intensity = std::log(sum_intensity + 1);
 
     // Step 2: Align the IonMobilogram vectors to the grid
     std::vector<double> im_grid = computeGrid_(ms2_mobilograms, eps);
@@ -452,7 +591,33 @@ namespace OpenMS
       Mobilogram aligned_mobilogram;
       Size max_peak_idx = 0;
       alignToGrid_(mobilogram, im_grid, aligned_mobilogram, eps, max_peak_idx);
+      aligned_mobilogram.setName(mobilogram.getName());
       if (!aligned_mobilogram.empty()) aligned_ms2_mobilograms.push_back(std::move(aligned_mobilogram));
+    }
+
+    size_t left = 0, max = 0, right = 0;
+    if ( apply_im_peak_picking ) {
+        if ( !aligned_ms2_mobilograms.empty())
+        {
+          OpenMS::Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_ms2_mobilograms);
+          PeakPickerMobilogram picker_;
+          Param picker_params = picker_.getParameters();
+          picker_params.setValue("method", "corrected");
+          picker_.setParameters(picker_params);
+          Mobilogram picked_mobilogram, smoothed_mobilogram;
+          picker_.pickMobilogram(summed_mobilogram, picked_mobilogram, smoothed_mobilogram);
+          std::tie(max, left, right) = findHighestPeak(picker_);
+          scores.im_drift_left = im_grid[left];
+          scores.im_drift_right = im_grid[right];
+          filterPeakIntensities(aligned_ms2_mobilograms, left, right);
+
+          OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms for " << summed_mobilogram.getName() << " found peak at " << im_grid[max] << "(" << im_grid[left] << " - " << im_grid[right] << ")" << std::endl;
+        }
+        else
+        {
+          scores.im_drift_left = -1;
+          scores.im_drift_right = -1;
+        }
     }
 
     // Step 3: Compute cross-correlation scores based on ion mobilograms

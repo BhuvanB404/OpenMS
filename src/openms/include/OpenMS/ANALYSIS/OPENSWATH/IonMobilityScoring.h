@@ -18,8 +18,9 @@
 #include <OpenMS/KERNEL/Mobilogram.h>
 
 // scoring
-#include <OpenMS/ANALYSIS/OPENSWATH/DIAScoring.h>
+#include <OpenMS/ANALYSIS/OPENSWATH/PeakPickerMobilogram.h>
 
+#include <OpenMS/ANALYSIS/OPENSWATH/DIAScoring.h>
 #include <vector>
 namespace OpenMS
 {
@@ -65,6 +66,7 @@ namespace OpenMS
       @param dia_extraction_ppm_ Whether m/z extraction width is in ppm
       @param use_spline Whether to use spline for fitting
       @param drift_extra Extend the extraction window to gain a larger field of view beyond drift_upper - drift_lower (in percent)
+      @param apply_im_peak_picking Apply peak picking on the ion mobilogram
     */
     static void driftScoring(const SpectrumSequence& spectra,
                              const std::vector<TransitionType> & transitions,
@@ -74,7 +76,8 @@ namespace OpenMS
                              const double dia_extraction_window_,
                              const bool dia_extraction_ppm_,
                              const bool use_spline,
-                             const double drift_extra);
+                             const double drift_extra,
+                             const bool apply_im_peak_picking);
 
     /**
       @brief Performs scoring of the ion mobility dimension in MS1
@@ -186,6 +189,56 @@ namespace OpenMS
     static void extractIntensities(const std::vector< Mobilogram >& mobilograms,
                                    std::vector<std::vector<double>>& int_values);
 
-  };
-}
+    
 
+  };
+
+  /*
+  @brief Helper function to sum up aligned mobilograms
+
+  This function takes a vector of aligned mobilograms and sums them up to create a single Mobilogram object. The resulting Mobilogram object will contain the sum of the intensity values from all the input mobilograms.
+
+  @param[in] aligned_mobilograms A vector of aligned mobilograms
+  @return  A Mobilogram object that is the sum of the input mobilograms
+  */
+  OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms);
+
+  /*
+  @brief Helper function to find the highest peak in a mobilogram
+
+  This function takes a PeakPickerMobilogram object and returns the left position, apex position, and right position of the highest peak in the mobilogram.
+
+  @param[in] picker A PeakPickerMobilogram object
+  @return A tuple containing the left position, apex position, and right position of the highest peak in the mobilogram
+  */
+  std::tuple<size_t, size_t, size_t> findHighestPeak(const PeakPickerMobilogram& picker);
+
+  /*
+  @brief Helper function to filter peak intensities in a mobilogram
+
+  This function takes a mobilogram and filters the peak intensities based on the left and right indices provided.
+
+  @note This function modifies the input mobilogram in place.
+
+  @param[in,out] mobilogram A Mobilogram object
+  @param[in] left_index The left index of the peak range to filter
+  @param[in] right_index The right index of the peak range to filter
+  */
+
+  void filterPeakIntensities(OpenMS::Mobilogram& mobilogram, size_t left_index, size_t right_index);
+
+  /*
+  @brief Helper function to filter peak intensities for a vector of mobilograms
+
+  This function takes a vector of mobilograms and filters the peak intensities based on the left and right indices provided.
+
+  @note This function modifies the input mobilograms in place.
+
+  @param[in,out] mobilograms A vector of Mobilogram objects
+  @param[in] left_index The left index of the peak range to filter
+  @param[in] right_index The right index of the peak range to filter
+  */
+  void filterPeakIntensities(std::vector<OpenMS::Mobilogram>& mobilograms, size_t left_index, size_t right_index);
+
+
+  } // namespace OpenMS
