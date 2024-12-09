@@ -25,7 +25,7 @@ namespace OpenMS
         defaults_.setValue("sgolay_frame_length", 9, "The number of subsequent data points used for smoothing.\nThis number has to be uneven. If it is not, 1 will be added.");
         defaults_.setValue("sgolay_polynomial_order", 3, "Order of the polynomial that is fitted.");
         defaults_.setValue("gauss_width", 0.002, "Gaussian width in seconds, estimated peak size.");
-        defaults_.setValue("use_gauss", "true", "Use Gaussian filter for smoothing (alternative is Savitzky-Golay filter)");
+        defaults_.setValue("use_gauss", "false", "Use Gaussian filter for smoothing (alternative is Savitzky-Golay filter)");
         defaults_.setValidStrings("use_gauss", {"false","true"});
 
         defaults_.setValue("peak_width", -1.0, "Force a certain minimal peak_width on the data (e.g. extend the peak at least by this amount on both sides) in seconds. -1 turns this feature off.");
@@ -58,164 +58,6 @@ namespace OpenMS
         pp_.setParameters(pepi_param);
     }
 
-#include <iostream>
-#include <iomanip>  // For std::setw
-#include <vector>
-#include <algorithm>  // For std::min_element and std::max_element
-
-    void plotMobilogram(const OpenMS::Mobilogram& mobilogram, int height = 10, int width = 50) {
-      if (mobilogram.empty()) {
-        std::cout << "Mobilogram is empty.\n";
-        return;
-      }
-
-      std::vector<double> intensities;
-      std::vector<double> positions;
-
-      for (const auto& peak : mobilogram) {
-        intensities.push_back(peak.getIntensity());
-        positions.push_back(peak.getPosition()[0]);
-      }
-
-      if (intensities.empty() || positions.empty()) {
-        std::cout << "No valid data in mobilogram.\n";
-        return;
-      }
-
-      double min_intensity = *std::min_element(intensities.begin(), intensities.end());
-      double max_intensity = *std::max_element(intensities.begin(), intensities.end());
-      double min_position = *std::min_element(positions.begin(), positions.end());
-      double max_position = *std::max_element(positions.begin(), positions.end());
-
-      if (min_intensity == max_intensity) {
-        std::cout << "All intensities are the same: " << min_intensity << "\n";
-        return;
-      }
-
-      if (min_position == max_position) {
-        std::cout << "All positions are the same: " << min_position << "\n";
-        return;
-      }
-
-      std::vector<std::vector<char>> plot(height, std::vector<char>(width, ' '));
-      std::vector<int> index_map(width, -1);
-
-      for (size_t i = 0; i < intensities.size(); ++i) {
-        double normalized_intensity = (intensities[i] - min_intensity) / (max_intensity - min_intensity);
-        double normalized_position = (positions[i] - min_position) / (max_position - min_position);
-
-        int y = static_cast<int>(std::floor(normalized_intensity * (height - 1)));
-        int x = static_cast<int>(std::floor(normalized_position * (width - 1)));
-
-        if (y >= 0 && y < height && x >= 0 && x < width) {
-          plot[height - 1 - y][x] = '*';
-          index_map[x] = i;
-        }
-      }
-
-      // Plot mobilogram with fixed-width formatting for alignment
-      std::cout << "Mobilogram (max intensity: " << max_intensity << ")\n";
-      for (const auto& row : plot) {
-        for (char c : row) {
-          std::cout << std::setw(2) << c;  // Ensure consistent width for each character
-        }
-        std::cout << '\n';
-      }
-
-      // Print indices below the intensity plot with a separator
-      for (int idx : index_map) {
-        if (idx != -1) {
-          std::cout << std::setw(2) << idx << "-";  // Use "-" as separator between numbers
-        } else {
-          std::cout << "-";  // Ensure spacing and separator when no index is available
-        }
-      }
-      std::cout << '\n';
-
-      // Add a line to separate the plot and the index
-      std::cout << std::string(width * 2, '-') << '\n';  // Adjust width of separator line
-      std::cout << "Position range: " << min_position << " - " << max_position << "\n";
-    }
-
-    void writeMobilogramToCSV(const OpenMS::Mobilogram& mobilogram, const std::string& filename) {
-      std::ofstream outFile(filename, std::ios::app);  // Open file in append mode
-
-      if (!outFile.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
-        return;
-      }
-
-      // Write header if the file is empty
-      outFile.seekp(0, std::ios::end);
-      if (outFile.tellp() == 0) {
-        outFile << "Name,Mobility,Intensity" << std::endl;
-      }
-
-      // Write data
-      for (size_t i = 0; i < mobilogram.size(); ++i) {
-        const auto& peak = mobilogram[i];
-        outFile << mobilogram.getName() << ","
-                << peak.getMobility() << ","
-                << peak.getIntensity() << std::endl;
-      }
-
-      outFile.close();
-
-//      std::cout << "Mobilogram data appended to " << filename << std::endl;
-    }
-
-    void writeIntegratedDataToCSV(const OpenMS::Mobilogram& mobilogram,
-                                  const std::vector<double>& integrated_intensities,
-                                  const std::vector<Size>& left_width,
-                                  const std::vector<Size>& right_width,
-                                  const std::string& filename)
-    {
-      std::ofstream outFile(filename, std::ios::app);  // Open file in append mode
-
-      if (!outFile.is_open())
-      {
-        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
-        return;
-      }
-
-      // Write header if the file is empty
-      outFile.seekp(0, std::ios::end);
-      if (outFile.tellp() == 0) {
-        outFile << "Name,Index,Integrated_Intensity,Left_Width,Right_Width,Left_Mobility,Right_Mobility" << std::endl;
-      }
-
-      // Write data
-      for (Size i = 0; i < integrated_intensities.size(); i++)
-      {
-        outFile << mobilogram.getName() << ","
-                << i << ","
-                << std::fixed << std::setprecision(4) << integrated_intensities[i] << ","
-                << left_width[i] << ","
-                << right_width[i] << ","
-                << std::fixed << std::setprecision(6) << mobilogram[left_width[i]].getMobility() << ","
-                << std::fixed << std::setprecision(6) << mobilogram[right_width[i]].getMobility()
-                << std::endl;
-      }
-
-      outFile.close();
-
-//      std::cout << "Integrated data appended to " << filename << std::endl;
-    }
-
-    std::string generateRandomID(size_t length) {
-      const char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-      std::random_device rd;  // Obtain a random number from hardware
-      std::mt19937 generator(rd());  // Seed the generator
-      std::uniform_int_distribution<> distribution(0, sizeof(charset) - 2); // Exclude the null terminator
-
-      std::string randomID;
-      for (size_t i = 0; i < length; ++i) {
-        randomID += charset[distribution(generator)];
-      }
-      return randomID;
-    }
-
-
     void PeakPickerMobilogram::pickMobilogram(const Mobilogram& mobilogram, Mobilogram& picked_mobilogram)
     {
       Mobilogram s;
@@ -243,38 +85,19 @@ namespace OpenMS
       }
       picked_mobilogram.clear();
 
-      // Generate a random ID and concatenate it with the names
-      std::string concatenated_name;
-      concatenated_name += mobilogram.getName();
-      // Append a random unique ID
-      std::string randomID = generateRandomID(8); // Generate an 8-character ID
-      concatenated_name += ";" + randomID;
-
-      // Set the concatenated name for the summed mobilogram
-      mobilogram.setName(concatenated_name);
-
       // Smooth the mobilogram
       smoothed_mobilogram = mobilogram;
-//      Mobilogram smoothed_mobilogram_gauss;
-//      smoothed_mobilogram_gauss = mobilogram;
       if (!use_gauss_)
       {
           sgolay_.filter(smoothed_mobilogram);
-//          gauss_.filter(smoothed_mobilogram);
       }
       else
       {
           gauss_.filter(smoothed_mobilogram);
       }
 
-//      plotMobilogram(mobilogram);
-//      writeMobilogramToCSV(mobilogram, "mobilogram_raw_data.csv");
-//      plotMobilogram(smoothed_mobilogram);
-//      writeMobilogramToCSV(smoothed_mobilogram_gauss, "mobilogram_sgolay_smooth_data.csv");
-//      writeMobilogramToCSV(smoothed_mobilogram, "mobilogram_gauss_smooth_data.csv");
       // Find initial seeds (peak picking)
       pp_.pick(smoothed_mobilogram, picked_mobilogram);
-//      std::cout << "Picked " << picked_mobilogram.size() << " mobilogram peaks." << std::endl;
 
       if (method_ == "legacy")
       {
@@ -297,27 +120,20 @@ namespace OpenMS
         integratePeaks_(mobilogram);
       }
 
-//      // Store the result in the picked_chromatogram
-//      OPENMS_POSTCONDITION(picked_mobilogram.getFloatDataArrays().size() == 1 &&
-//                             picked_mobilogram.getFloatDataArrays()[IDX_FWHM].getName() == "FWHM", "Swath: PeakPicking did not deliver FWHM attributes.")
-
       picked_mobilogram.getFloatDataArrays().resize(SIZE_OF_FLOATINDICES);
       picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].setName("IntegratedIntensity");
       picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].setName("leftWidth");
       picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].setName("rightWidth");
       // just copy FWHM from initial peak picking
-//      std::cout << "Size of picked_mobilogram: " << picked_mobilogram.size() << std::endl;
       picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].reserve(picked_mobilogram.size());
       picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].reserve(picked_mobilogram.size());
       picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].reserve(picked_mobilogram.size());
       for (Size i = 0; i < picked_mobilogram.size(); i++)
       {
-//        std::cout << "Size of picked_mobilogram: " << picked_mobilogram.size() << " integrated_intensitie: " << integrated_intensities_[i] << " left_width: " << left_width_[i] << " right_width: " << right_width_[i] << std::endl;
         picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].push_back(integrated_intensities_[i]);
         picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].push_back((float)mobilogram[left_width_[i]].getMobility());
         picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].push_back((float)mobilogram[right_width_[i]].getMobility());
       }
-//      writeIntegratedDataToCSV(mobilogram, integrated_intensities_, left_width_, right_width_, "peak_picking_data.csv");
 
     }
 
@@ -331,10 +147,6 @@ namespace OpenMS
         left_width_.reserve(picked_mobilogram.size());
         right_width_.reserve(picked_mobilogram.size());
 
-//        if (signal_to_noise_ > 0.0)
-//        {
-//          snt_.init(mobilogram);
-//        }
         Size current_peak = 0;
         for (Size i = 0; i < picked_mobilogram.size(); i++)
         {
@@ -345,10 +157,8 @@ namespace OpenMS
           // peak core found, now extend it to the left
           Size k = 2;
           while ((min_i - k + 1) > 0
-                 //&& std::fabs(chromatogram[min_i-k].getMZ() - peak_raw_data.begin()->first) < spacing_difference*min_spacing
                  && (mobilogram[min_i - k].getIntensity() < mobilogram[min_i - k + 1].getIntensity()
                      || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i - k].getMobility() - central_peak_rt) < peak_width_)))
-//                 && (signal_to_noise_ <= 0.0 || snt_.getSignalToNoise(min_i - k) >= signal_to_noise_))
           {
             ++k;
           }
@@ -357,10 +167,8 @@ namespace OpenMS
           // to the right
           k = 2;
           while ((min_i + k) < mobilogram.size()
-                 //&& std::fabs(chromatogram[min_i+k].getMZ() - peak_raw_data.rbegin()->first) < spacing_difference*min_spacing
                  && (mobilogram[min_i + k].getIntensity() < mobilogram[min_i + k - 1].getIntensity()
                      || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i + k].getMobility() - central_peak_rt) < peak_width_)))
-//                 && (signal_to_noise_ <= 0.0 || snt_.getSignalToNoise(min_i + k) >= signal_to_noise_) )
           {
             ++k;
           }
