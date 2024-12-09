@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // 
 // --------------------------------------------------------------------------
-// $Maintainer: Hannes Roest $
-// $Authors: Hannes Roest $
+// $Maintainer: Justin Sing $
+// $Authors: Justin Sing $
 // --------------------------------------------------------------------------
 
 #include <OpenMS/CONCEPT/ClassTest.h>
@@ -20,8 +20,7 @@ typedef Mobilogram RichPeakMobilogram;
 
 RichPeakMobilogram get_mobilogram(int i)
 {
-  static const double im_data1[]
-    = {0.93734956, 0.93835497, 0.9393905,  0.9404265,  0.9414631, 0.9425003,  0.9435083,  0.9445466,  0.9455854,  0.94662476, 0.947635,
+  static const double im_data1[] = {0.93734956, 0.93835497, 0.9393905,  0.9404265,  0.9414631, 0.9425003,  0.9435083,  0.9445466,  0.9455854,  0.94662476, 0.947635,
        0.94867545, 0.9496867,  0.95072824, 0.95177037, 0.9527832, 0.9538264,  0.95484036, 0.9558847,  0.9568997,  0.9579451,  0.9589612,
        0.96000767, 0.9610248,  0.96207243, 0.96309066, 0.9641094, 0.96515864, 0.9661785,  0.96719885, 0.96824974, 0.9692712,  0.9702931,
        0.97131556, 0.9723687,  0.97339225, 0.9744164,  0.975441,  0.9764661,  0.977522,   0.9785482,  0.979575,   0.98060226, 0.98163015,
@@ -76,7 +75,7 @@ START_SECTION(void pickMobilogram(const RichPeakMobilogram& mobilogram, RichPeak
   picker_param.setValue("use_gauss", "false");
   picker.setParameters(picker_param);
   picker.pickMobilogram(mobilogram, picked_mobilogram, smoothed_mobilogram);
-  
+
   TEST_REAL_SIMILAR(picked_mobilogram[0].getIntensity(), 58956.1);
   TEST_REAL_SIMILAR(picked_mobilogram[0].getMZ(), 0.978364);
   TEST_REAL_SIMILAR(picked_mobilogram.getFloatDataArrays()[PeakPickerMobilogram::IDX_ABUNDANCE][0], 884145); // IntegratedIntensity
