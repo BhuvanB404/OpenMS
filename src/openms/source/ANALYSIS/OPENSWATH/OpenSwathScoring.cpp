@@ -9,6 +9,7 @@
 #include <OpenMS/ANALYSIS/OPENSWATH/OpenSwathScoring.h>
 
 #include <OpenMS/CONCEPT/Macros.h>
+#include <OpenMS/CONCEPT/LogStream.h>
 
 // scoring
 #include <OpenMS/ANALYSIS/OPENSWATH/OpenSwathScores.h>
@@ -241,18 +242,20 @@ namespace OpenMS
 
   void OpenSwathScoring::calculateDIAIdScores(OpenSwath::IMRMFeature* imrmfeature,
                                               const TransitionType & transition,
+                                              MRMTransitionGroupType& trgr_detect,
                                               const std::vector<OpenSwath::SwathMap>& swath_maps,
                                               RangeMobility& im_range,
                                               const OpenMS::DIAScoring & diascoring,
-                                              OpenSwath_Scores & scores)
+                                              OpenSwath_Scores & scores,
+                                              const double drift_target)
   {
     OPENMS_PRECONDITION(imrmfeature != nullptr, "Feature to be scored cannot be null");
     OPENMS_PRECONDITION(swath_maps.size() > 0, "There needs to be at least one swath map.");
 
-    if (!use_ms1_ion_mobility_)
-    {
-      im_range.clear();
-    }
+    // if (!use_ms1_ion_mobility_)
+    // {
+    //   im_range.clear();
+    // }
 
     // Identify corresponding SONAR maps (if more than one map is used)
     std::vector<OpenSwath::SwathMap> used_swath_maps;
@@ -294,6 +297,26 @@ namespace OpenMS
                                                 scores.isotope_overlap);
     // Mass deviation score
     diascoring.dia_ms1_massdiff_score(transition.getProductMZ(), spectrum, im_range, scores.massdev_score);
+
+    // Drift Scoring for Identification transitions
+    if (su_.use_im_scores)
+    {
+      OPENMS_LOG_DEBUG << "Computing IM scores for identification transition: " << transition.transition_name << " with product mz " << transition.getProductMZ() << " and precursor mz " << transition.getPrecursorMZ() << std::endl;
+
+      // Temporary vector container for storing transition to match rest of code.
+      std::vector<TransitionType> transitionVector;
+
+      // Add the existing transition to the vector
+      transitionVector.push_back(transition);
+
+      double dia_extract_window_ = (double)diascoring.getParameters().getValue("dia_extraction_window");
+      bool dia_extraction_ppm_ = diascoring.getParameters().getValue("dia_extraction_unit") == "ppm";
+
+      IonMobilityScoring::driftIdScoring(spectrum, transitionVector, trgr_detect, scores,
+                                       drift_target, im_range,
+                                       dia_extract_window_, dia_extraction_ppm_,
+                                       false, im_drift_extra_pcnt_, apply_im_peak_picking_);
+    }
   }
 
   void OpenSwathScoring::calculateChromatographicScores(

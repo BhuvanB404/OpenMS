@@ -15,6 +15,10 @@
 #include <OpenMS/OPENSWATHALGO/DATAACCESS/TransitionExperiment.h>
 #include <OpenMS/OPENSWATHALGO/DATAACCESS/SwathMap.h>
 
+// Kernel classes
+#include <OpenMS/KERNEL/MRMTransitionGroup.h>
+#include <OpenMS/KERNEL/MSChromatogram.h>
+
 // scoring
 #include <OpenMS/ANALYSIS/OPENSWATH/OpenSwathScores.h>
 #include <OpenMS/ANALYSIS/OPENSWATH/DIAScoring.h>
@@ -40,6 +44,7 @@ namespace OpenMS
   {
     typedef OpenSwath::LightCompound CompoundType;
     typedef OpenSwath::LightTransition TransitionType;
+    typedef MRMTransitionGroup< MSChromatogram, TransitionType> MRMTransitionGroupType;
 
     enum class SpectrumAdditionMethod
     {
@@ -212,18 +217,22 @@ namespace OpenMS
      *
      * @param imrmfeature The feature to be scored
      * @param transition The library transition to score the feature against
+     * @param transition_group_detection The detection transition group
      * @param swath_maps The SWATH-MS (DIA) maps from which to retrieve full MS/MS spectra at the chromatographic peak apices
      * @param range_im drift time lower and upper bounds
      * @param diascoring DIA Scoring object to use for scoring
      * @param scores The object to store the result
+     * @param drift_target target drift value
      *
     */
     void calculateDIAIdScores(OpenSwath::IMRMFeature* imrmfeature,
                               const TransitionType & transition,
+                              MRMTransitionGroupType& transition_group_detection,
                               const std::vector<OpenSwath::SwathMap>& swath_maps,
                               RangeMobility& range_im,
                               const OpenMS::DIAScoring & diascoring,
-                              OpenSwath_Scores & scores);
+                              OpenSwath_Scores & scores,
+                              const double drift_target);
 
     /** @brief Computing the normalized library intensities from the transition objects
      *

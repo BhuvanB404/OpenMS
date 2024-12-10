@@ -298,12 +298,14 @@ namespace OpenMS
   }
 
   OpenSwath_Ind_Scores MRMFeatureFinderScoring::scoreIdentification_(MRMTransitionGroupType& trgr_ident,
+                                                                     MRMTransitionGroupType& trgr_detect,
                                                                      OpenSwathScoring& scorer,
                                                                      const size_t feature_idx,
                                                                      const std::vector<std::string>& native_ids_detection,
                                                                      const double det_intensity_ratio_score,
                                                                      const double det_mi_ratio_score,
-                                                                     const std::vector<OpenSwath::SwathMap>& swath_maps) const
+                                                                     const std::vector<OpenSwath::SwathMap>& swath_maps,
+                                                                     const double drift_target) const
   {
     MRMFeature idmrmfeature = trgr_ident.getFeaturesMuteable()[feature_idx];
     OpenSwath::IMRMFeature* idimrmfeature;
@@ -442,22 +444,47 @@ namespace OpenMS
     bool swath_present = (!swath_maps.empty() && swath_maps[0].sptr->getNrSpectra() > 0);
     if (swath_present && su_.use_dia_scores_ && !native_ids_identification.empty())
     {
-      std::vector<double> ind_isotope_correlation, ind_isotope_overlap, ind_massdev_score;
+      std::vector<double> ind_isotope_correlation, ind_isotope_overlap, ind_massdev_score, ind_im_drift, ind_im_drift_left, ind_im_drift_right, ind_im_delta, ind_im_delta_score, ind_im_log_intensity;
+      std::vector<double> ind_im_contrast_coelution, ind_im_contrast_shape, ind_im_sum_contrast_coelution, ind_im_sum_contrast_shape;
       for (size_t i = 0; i < native_ids_identification.size(); i++)
       {
         OpenSwath_Scores tmp_scores;
 
         scorer.calculateDIAIdScores(idimrmfeature,
                                     trgr_ident.getTransition(native_ids_identification[i]),
-                                    swath_maps, im_range, diascoring_, tmp_scores);
+                                    trgr_detect,
+                                    swath_maps, im_range, diascoring_, tmp_scores, drift_target);
 
         ind_isotope_correlation.push_back(tmp_scores.isotope_correlation);
         ind_isotope_overlap.push_back(tmp_scores.isotope_overlap);
         ind_massdev_score.push_back(tmp_scores.massdev_score);
+
+        // Ion mobility scores
+        ind_im_drift.push_back(tmp_scores.im_drift);
+        ind_im_drift_left.push_back(tmp_scores.im_drift_left);
+        ind_im_drift_right.push_back(tmp_scores.im_drift_right);
+        ind_im_delta.push_back(tmp_scores.im_delta);
+        ind_im_delta_score.push_back(tmp_scores.im_delta_score);
+        ind_im_log_intensity.push_back(tmp_scores.im_log_intensity);
+        ind_im_contrast_coelution.push_back(tmp_scores.im_ind_contrast_coelution);
+        ind_im_contrast_shape.push_back(tmp_scores.im_ind_contrast_shape);
+        ind_im_sum_contrast_coelution.push_back(tmp_scores.im_ind_sum_contrast_coelution);
+        ind_im_sum_contrast_shape.push_back(tmp_scores.im_ind_sum_contrast_shape);
       }
       idscores.ind_isotope_correlation = ind_isotope_correlation;
       idscores.ind_isotope_overlap = ind_isotope_overlap;
       idscores.ind_massdev_score = ind_massdev_score;
+
+      idscores.ind_im_drift = ind_im_drift;
+      idscores.ind_im_drift_left = ind_im_drift_left;
+      idscores.ind_im_drift_right = ind_im_drift_right;
+      idscores.ind_im_delta = ind_im_delta;
+      idscores.ind_im_delta_score = ind_im_delta_score;
+      idscores.ind_im_log_intensity = ind_im_log_intensity;
+      idscores.ind_im_contrast_coelution = ind_im_contrast_coelution;
+      idscores.ind_im_contrast_shape = ind_im_contrast_shape;
+      idscores.ind_im_sum_contrast_coelution = ind_im_sum_contrast_coelution;
+      idscores.ind_im_sum_contrast_shape = ind_im_sum_contrast_shape;
     }
 
     delete idimrmfeature;
@@ -728,16 +755,16 @@ namespace OpenMS
         // Unique Ion Signature (UIS) scores
         if (su_.use_uis_scores && !transition_group_identification.getTransitions().empty())
         {
-          OpenSwath_Ind_Scores idscores = scoreIdentification_(transition_group_identification, scorer, feature_idx,
+          OpenSwath_Ind_Scores idscores = scoreIdentification_(transition_group_identification, transition_group_detection, scorer, feature_idx,
                                                                native_ids_detection, det_intensity_ratio_score,
-                                                               det_mi_ratio_score, swath_maps);
+                                                               det_mi_ratio_score, swath_maps,drift_target);
           mrmfeature.IDScoresAsMetaValue(false, idscores);
         }
         if (su_.use_uis_scores && !transition_group_identification_decoy.getTransitions().empty())
         {
-          OpenSwath_Ind_Scores idscores = scoreIdentification_(transition_group_identification_decoy, scorer, feature_idx,
+          OpenSwath_Ind_Scores idscores = scoreIdentification_(transition_group_identification_decoy, transition_group_detection, scorer, feature_idx,
                                                                native_ids_detection, det_intensity_ratio_score,
-                                                               det_mi_ratio_score, swath_maps);
+                                                               det_mi_ratio_score, swath_maps, drift_target);
           mrmfeature.IDScoresAsMetaValue(true, idscores);
         }
 
