@@ -211,7 +211,7 @@ namespace OpenMS
     }
   }
 
-  OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms) 
+  Mobilogram sumAlignedMobilograms(const std::vector<Mobilogram>& aligned_mobilograms) 
   {
     if (aligned_mobilograms.empty()) return {};
 
@@ -219,7 +219,7 @@ namespace OpenMS
 
     OPENMS_PRECONDITION(
         std::all_of(aligned_mobilograms.begin() + 1, aligned_mobilograms.end(),
-                    [reference_size](const OpenMS::Mobilogram& mobilogram) {
+                    [reference_size](const Mobilogram& mobilogram) {
                         return mobilogram.size() == reference_size;
                     }),
         "All Mobilograms in aligned_mobilograms must have the same size."
@@ -272,7 +272,7 @@ namespace OpenMS
                             picker.right_width_[max_index]);
   }
 
-  void filterPeakIntensities(OpenMS::Mobilogram& mobilogram,
+  void filterPeakIntensities(Mobilogram& mobilogram,
                                size_t left_index,
                                size_t right_index) 
   {
@@ -287,7 +287,7 @@ namespace OpenMS
     }
 
     // Create a temporary vector to hold the filtered peaks
-    std::vector<OpenMS::MobilityPeak1D> filtered_peaks;
+    std::vector<MobilityPeak1D> filtered_peaks;
 
     // Ensure the indices are within bounds
     size_t start = std::max(left_index, static_cast<size_t>(0));
@@ -306,7 +306,7 @@ namespace OpenMS
     }
   }
 
-  void filterPeakIntensities(std::vector<OpenMS::Mobilogram>& mobilograms,
+  void filterPeakIntensities(std::vector<Mobilogram>& mobilograms,
                                size_t left_index,
                                size_t right_index) 
   {
@@ -322,7 +322,7 @@ namespace OpenMS
 
     for (auto& mobilogram : mobilograms) {
       // Create a temporary vector to hold the filtered peaks
-      std::vector<OpenMS::MobilityPeak1D> filtered_peaks;
+      std::vector<MobilityPeak1D> filtered_peaks;
 
       // Ensure the indices are within bounds
       size_t start = std::max(left_index, static_cast<size_t>(0));
@@ -385,7 +385,7 @@ namespace OpenMS
     im_range.scaleBy(drift_extra * 2. + 1); // multiple by 2 because want drift extra to be extended by that amount on either side
 
     // Step 1: MS2 extraction
-    std::vector< OpenMS::Mobilogram > ms2_mobilograms;
+    std::vector< Mobilogram > ms2_mobilograms;
     for (std::size_t k = 0; k < transitions.size(); k++)
     {
       double im(0), intensity(0);
@@ -402,7 +402,7 @@ namespace OpenMS
     // Step 2: MS1 extraction
     double im(0), intensity(0);
     Mobilogram ms1_profile;
-    std::vector< OpenMS::Mobilogram > ms1_mobilograms;
+    std::vector< Mobilogram > ms1_mobilograms;
     RangeMZ mz_range = DIAHelpers::createMZRangePPM(transitions[0].getPrecursorMZ(), dia_extract_window_, dia_extraction_ppm_);
 
     computeIonMobilogram(ms1spectrum, mz_range, im_range, im, intensity, ms1_profile, eps); // TODO: aggregate over isotopes
@@ -412,7 +412,7 @@ namespace OpenMS
     ms2_mobilograms.pop_back();
 
     // Step 3: Align the IonMobilogram vectors to the grid
-    std::vector< OpenMS::Mobilogram > aligned_ms2_mobilograms;
+    std::vector< Mobilogram > aligned_ms2_mobilograms;
     for (const auto & mobilogram : ms2_mobilograms)
     {
       Mobilogram aligned_mobilogram;
@@ -535,7 +535,7 @@ namespace OpenMS
     int tr_used = 0;
 
     // Step 1: MS2 extraction
-    std::vector< OpenMS::Mobilogram > ms2_mobilograms;
+    std::vector< Mobilogram > ms2_mobilograms;
     for (std::size_t k = 0; k < transitions.size(); k++)
     {
       const TransitionType transition = transitions[k];
@@ -590,7 +590,7 @@ namespace OpenMS
 
     // Step 2: Align the IonMobilogram vectors to the grid
     std::vector<double> im_grid = computeGrid_(ms2_mobilograms, eps);
-    std::vector< OpenMS::Mobilogram > aligned_ms2_mobilograms;
+    std::vector< Mobilogram > aligned_ms2_mobilograms;
     for (const auto & mobilogram : ms2_mobilograms)
     {
       Mobilogram aligned_mobilogram;
@@ -603,7 +603,7 @@ namespace OpenMS
     if ( apply_im_peak_picking ) {
         if ( !aligned_ms2_mobilograms.empty())
         {
-          OpenMS::Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_ms2_mobilograms);
+          Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_ms2_mobilograms);
           PeakPickerMobilogram picker_;
           Param picker_params = picker_.getParameters();
           picker_params.setValue("method", "corrected");
@@ -696,7 +696,7 @@ namespace OpenMS
 
       // Cross-Correlation of Identification against Detection Mobilogram Features
 
-      std::vector< OpenMS::Mobilogram > mobilograms;
+      std::vector< Mobilogram > mobilograms;
 
       // Step 1: MS2 detection transitions extraction
       for (std::size_t k = 0; k < trgr_detect.getTransitions().size(); k++)
@@ -725,7 +725,7 @@ namespace OpenMS
         mobilograms.pop_back();
 
         // Step 3: Align the IonMobilogram vectors to the grid
-        std::vector< OpenMS::Mobilogram > aligned_mobilograms;
+        std::vector< Mobilogram > aligned_mobilograms;
         for (const auto &mobilogram : mobilograms)
         {
           Mobilogram aligned_mobilogram;
@@ -739,7 +739,7 @@ namespace OpenMS
         {
           if ( !aligned_mobilograms.empty())
           {
-            OpenMS::Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_mobilograms);
+            Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_mobilograms);
 
             PeakPickerMobilogram picker_;
             Param picker_params = picker_.getParameters();
