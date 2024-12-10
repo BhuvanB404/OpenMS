@@ -695,7 +695,7 @@ namespace OpenMS
       scores.im_delta_score = fabs(drift_target - im);
       scores.im_delta = drift_target - im;
 
-      scores.im_log_intensity = std::log(intensity+1);
+      scores.im_log_intensity = std::log1p(intensity);
       OPENMS_LOG_DEBUG << "Identification Transition IM Scoring for " << transition[0].transition_name << " range (" << im_range.getMin() << " - " << im_range.getMax() << ") IM = " << im << " im_delta = " << drift_target - im << " int = " << intensity << " log int = " << std::log(intensity+1) << std::endl;
 
       // Cross-Correlation of Identification against Detection Mobilogram Features
