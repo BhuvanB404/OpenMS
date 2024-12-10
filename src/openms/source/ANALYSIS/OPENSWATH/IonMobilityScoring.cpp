@@ -132,7 +132,8 @@ namespace OpenMS
   std::vector<double> IonMobilityScoring::extractIntensities(const Mobilogram& mobilogram) {
     std::vector<double> mobility_int;
     mobility_int.reserve(mobilogram.size());
-    for (const auto& k : mobilogram) {
+    for (const auto& k : mobilogram) 
+    {
       mobility_int.push_back(k.getIntensity());
     }
     return mobility_int;
