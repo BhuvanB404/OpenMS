@@ -105,7 +105,7 @@ namespace OpenMS
     double im_ms1_sum_contrast_shape = 0;
     double im_ms1_drift = 0;
     double im_ms1_delta = -1;
-    // additional ion mobility IPF identifying against detectuing transition scores
+    // additional ion mobility IPF identifying against detecting transition scores
     double im_ind_contrast_coelution = 0;
     double im_ind_contrast_shape = 0;
     double im_ind_sum_contrast_coelution = 0;
