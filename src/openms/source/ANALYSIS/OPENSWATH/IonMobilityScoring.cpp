@@ -213,9 +213,7 @@ namespace OpenMS
 
   OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms) 
   {
-    if (aligned_mobilograms.empty()) {
-      return OpenMS::Mobilogram();
-    }
+    if (aligned_mobilograms.empty()) return {};
 
     OpenMS::Mobilogram summed_mobilogram;
 
@@ -727,7 +725,7 @@ namespace OpenMS
       mobilograms.push_back(identification_mobilogram);
 
       // Check to make sure IM of identification is not -1, otherwise assign 0 for scores
-      if ( identification_im!=-1 )
+      if ( identification_im != -1 )
       {
         std::vector<double> im_grid = computeGrid_(mobilograms, eps); // ensure grid is based on all profiles!
         mobilograms.pop_back();
