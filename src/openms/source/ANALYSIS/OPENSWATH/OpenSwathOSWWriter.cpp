@@ -142,6 +142,16 @@ namespace OpenMS
       "VAR_MI_RATIO_SCORE REAL NULL," \
       "VAR_ISOTOPE_CORRELATION_SCORE REAL NULL," \
       "VAR_ISOTOPE_OVERLAP_SCORE REAL NULL, " \
+      "EXP_IM REAL NULL," \
+      "EXP_IM_LEFTWIDTH REAL," \
+      "EXP_IM_RIGHTWIDTH REAL," \
+      "DELTA_IM REAL NULL," \
+      "VAR_IM_DELTA_SCORE REAL NULL," \
+      "VAR_IM_LOG_INTENSITY REAL NULL," \
+      "VAR_IM_XCORR_COELUTION_CONTRAST, " \
+      "VAR_IM_XCORR_SHAPE_CONTRAST, " \
+      "VAR_IM_XCORR_COELUTION_COMBINED, " \
+      "VAR_IM_XCORR_SHAPE_COMBINED, " \
       "START_POSITION_AT_5 REAL NULL, " \
       "END_POSITION_AT_5 REAL NULL, " \
       "START_POSITION_AT_10 REAL NULL, " \
@@ -413,6 +423,18 @@ namespace OpenMS
         auto id_target_ind_mi_ratio_score = getSeparateScore(feature_it, "id_target_ind_mi_ratio_score");
         auto id_target_ind_isotope_correlation = getSeparateScore(feature_it, "id_target_ind_isotope_correlation");
         auto id_target_ind_isotope_overlap = getSeparateScore(feature_it, "id_target_ind_isotope_overlap");
+        // Ion Mobility scores
+        auto id_target_ind_im_drift = getSeparateScore(feature_it, "id_target_ind_im_drift");
+        auto id_target_ind_im_drift_left = getSeparateScore(feature_it, "id_target_ind_im_drift_left");
+        auto id_target_ind_im_drift_right = getSeparateScore(feature_it, "id_target_ind_im_drift_right");
+        auto id_target_ind_im_delta = getSeparateScore(feature_it, "id_target_ind_im_delta");
+        auto id_target_ind_im_delta_score = getSeparateScore(feature_it, "id_target_ind_im_delta_score");
+        auto id_target_ind_im_log_intensity = getSeparateScore(feature_it, "id_target_ind_im_log_intensity");
+        auto id_target_ind_im_contrast_coelution = getSeparateScore(feature_it, "id_target_ind_im_contrast_coelution");
+        auto id_target_ind_im_contrast_shape = getSeparateScore(feature_it, "id_target_ind_im_contrast_shape");
+        auto id_target_ind_im_sum_contrast_coelution = getSeparateScore(feature_it, "id_target_ind_im_sum_contrast_coelution");
+        auto id_target_ind_im_sum_contrast_shape = getSeparateScore(feature_it, "id_target_ind_im_sum_contrast_shape");
+
 
         // check if there are compute_peak_shape_metrics scores
         auto id_target_ind_start_position_at_5 = getSeparateScore(feature_it, "id_target_ind_start_position_at_5");
@@ -444,7 +466,9 @@ namespace OpenMS
               " APEX_INTENSITY, APEX_RT, RT_FWHM, MASSERROR_PPM, TOTAL_MI, VAR_INTENSITY_SCORE, VAR_INTENSITY_RATIO_SCORE, "\
               " VAR_LOG_INTENSITY, VAR_XCORR_COELUTION, VAR_XCORR_SHAPE, VAR_LOG_SN_SCORE, "\
               " VAR_MASSDEV_SCORE, VAR_MI_SCORE, VAR_MI_RATIO_SCORE, "\
-              " VAR_ISOTOPE_CORRELATION_SCORE, VAR_ISOTOPE_OVERLAP_SCORE "
+              " VAR_ISOTOPE_CORRELATION_SCORE, VAR_ISOTOPE_OVERLAP_SCORE, "\
+              " EXP_IM, EXP_IM_LEFTWIDTH, EXP_IM_RIGHTWIDTH, DELTA_IM, VAR_IM_DELTA_SCORE, VAR_IM_LOG_INTENSITY, "\
+              " VAR_IM_XCORR_COELUTION_CONTRAST, VAR_IM_XCORR_SHAPE_CONTRAST, VAR_IM_XCORR_COELUTION_COMBINED, VAR_IM_XCORR_SHAPE_COMBINED "
               << (enable_compute_peak_shape_metrics ? ", START_POSITION_AT_5, END_POSITION_AT_5, "
                                          "START_POSITION_AT_10, END_POSITION_AT_10, START_POSITION_AT_50, END_POSITION_AT_50, "
                                          "TOTAL_WIDTH, TAILING_FACTOR, ASYMMETRY_FACTOR, SLOPE_OF_BASELINE, BASELINE_DELTA_2_HEIGHT, "
@@ -469,8 +493,17 @@ namespace OpenMS
                                         << id_target_ind_mi_score[i] << ", "
                                         << id_target_ind_mi_ratio_score[i] << ", "
                                         << id_target_ind_isotope_correlation[i] << ", "
-                                        << id_target_ind_isotope_overlap[i];
-
+                                        << id_target_ind_isotope_overlap[i] << ", "
+                                        << id_target_ind_im_drift[i] << ", "
+                                        << id_target_ind_im_drift_left[i] << ", "
+                                        << id_target_ind_im_drift_right[i] << ", "
+                                        << id_target_ind_im_delta[i] << ", "
+                                        << id_target_ind_im_delta_score[i] << ", "
+                                        << id_target_ind_im_log_intensity[i] << ", "
+                                        << id_target_ind_im_contrast_coelution[i] << ", "
+                                        << id_target_ind_im_contrast_shape[i] << ", "
+                                        << id_target_ind_im_sum_contrast_coelution[i] << ", "
+                                        << id_target_ind_im_sum_contrast_shape[i];
                          if (enable_compute_peak_shape_metrics)
                          {
                             sql_feature_uis_transition << ", "
@@ -512,6 +545,18 @@ namespace OpenMS
         auto id_decoy_ind_isotope_correlation = getSeparateScore(feature_it, "id_decoy_ind_isotope_correlation");
         auto id_decoy_ind_isotope_overlap = getSeparateScore(feature_it, "id_decoy_ind_isotope_overlap");
 
+        // Ion Mobility scores
+        auto id_decoy_ind_im_drift = getSeparateScore(feature_it, "id_decoy_ind_im_drift");
+        auto id_decoy_ind_im_drift_left = getSeparateScore(feature_it, "id_decoy_ind_im_drift_left");
+        auto id_decoy_ind_im_drift_right = getSeparateScore(feature_it, "id_decoy_ind_im_drift_right");
+        auto id_decoy_ind_im_delta = getSeparateScore(feature_it, "id_decoy_ind_im_delta");
+        auto id_decoy_ind_ind_im_delta_score = getSeparateScore(feature_it, "id_decoy_ind_im_delta_score");
+        auto id_decoy_ind_log_intensity = getSeparateScore(feature_it, "id_decoy_ind_im_log_intensity");
+        auto id_decoy_ind_im_contrast_coelution = getSeparateScore(feature_it, "id_decoy_ind_im_contrast_coelution");
+        auto id_decoy_ind_im_contrast_shape = getSeparateScore(feature_it, "id_decoy_ind_im_contrast_shape");
+        auto id_decoy_ind_im_sum_contrast_coelution = getSeparateScore(feature_it, "id_decoy_ind_im_sum_contrast_coelution");
+        auto id_decoy_ind_im_sum_contrast_shape = getSeparateScore(feature_it, "id_decoy_ind_im_sum_contrast_shape");
+
         // get scores for peak shape metrics will just be empty vector if not present
         auto decoy_start_position_at_5 = getSeparateScore(feature_it, "id_decoy_ind_start_position_at_5");
         auto decoy_end_position_at_5 = getSeparateScore(feature_it, "id_decoy_ind_end_position_at_5");
@@ -538,7 +583,9 @@ namespace OpenMS
                 " APEX_INTENSITY, APEX_RT, RT_FWHM, MASSERROR_PPM, TOTAL_MI, VAR_INTENSITY_SCORE, VAR_INTENSITY_RATIO_SCORE, "\
                 " VAR_LOG_INTENSITY, VAR_XCORR_COELUTION, VAR_XCORR_SHAPE, VAR_LOG_SN_SCORE, "\
                 " VAR_MASSDEV_SCORE, VAR_MI_SCORE, VAR_MI_RATIO_SCORE, "\
-                " VAR_ISOTOPE_CORRELATION_SCORE, VAR_ISOTOPE_OVERLAP_SCORE "
+                " VAR_ISOTOPE_CORRELATION_SCORE, VAR_ISOTOPE_OVERLAP_SCORE, "\
+                " EXP_IM, EXP_IM_LEFTWIDTH, EXP_IM_RIGHTWIDTH, DELTA_IM, VAR_IM_DELTA_SCORE, VAR_IM_LOG_INTENSITY, "\
+                " VAR_IM_XCORR_COELUTION_CONTRAST, VAR_IM_XCORR_SHAPE_CONTRAST, VAR_IM_XCORR_COELUTION_COMBINED, VAR_IM_XCORR_SHAPE_COMBINED "
                 << (enable_compute_peak_shape_metrics ? ", START_POSITION_AT_5, END_POSITION_AT_5, "
                                          "START_POSITION_AT_10, END_POSITION_AT_10, START_POSITION_AT_50, END_POSITION_AT_50, "
                                          "TOTAL_WIDTH, TAILING_FACTOR, ASYMMETRY_FACTOR, SLOPE_OF_BASELINE, BASELINE_DELTA_2_HEIGHT, "
@@ -563,7 +610,17 @@ namespace OpenMS
                                         << id_decoy_ind_mi_score[i] << ", "
                                         << id_decoy_ind_mi_ratio_score[i] << ", "
                                         << id_decoy_ind_isotope_correlation[i] << ", "
-                                        << id_decoy_ind_isotope_overlap[i];
+                                        << id_decoy_ind_isotope_overlap[i] << ", "
+                                        << id_decoy_ind_im_drift[i] << ", "
+                                        << id_decoy_ind_im_drift_left[i] << ", "
+                                        << id_decoy_ind_im_drift_right[i] << ", "
+                                        << id_decoy_ind_im_delta[i] << ", "
+                                        << id_decoy_ind_ind_im_delta_score[i] << ", "
+                                        << id_decoy_ind_log_intensity[i] << ", "
+                                        << id_decoy_ind_im_contrast_coelution[i] << ", "
+                                        << id_decoy_ind_im_contrast_shape[i] << ", "
+                                        << id_decoy_ind_im_sum_contrast_coelution[i] << ", "
+                                        << id_decoy_ind_im_sum_contrast_shape[i];
 
                          if (enable_compute_peak_shape_metrics)
                          {
