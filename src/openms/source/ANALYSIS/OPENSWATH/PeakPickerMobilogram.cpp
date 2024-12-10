@@ -79,8 +79,7 @@ namespace OpenMS
       }
       else
       {
-        OPENMS_LOG_DEBUG << " ====  Picking mobilogram for " << mobilogram.getName() << " at RT " << mobilogram.getRT() <<
-        " with " << mobilogram.size() << " peaks (start at IM " << mobilogram[0].getMobility() << " to IM " << mobilogram.back().getMobility() << ") "
+        OPENMS_LOG_DEBUG << " ====  Picking mobilogram with " << mobilogram.size() << " peaks (start at IM " << mobilogram[0].getMobility() << " to IM " << mobilogram.back().getMobility() << ") "
         "using method \'" << method_ << "\'" << std::endl;
       }
       picked_mobilogram.clear();

@@ -242,14 +242,6 @@ namespace OpenMS
     // Docu in base class (RangeManager)
     void updateRanges() override;
 
-    ///@name Accessors for meta information
-    ///@{
-    /// Returns the name
-    const String& getName() const;
-
-    /// Sets the name
-    void setName(const String& name);
-
     /// Returns the retention time (in seconds)
     double getRT() const noexcept
     {

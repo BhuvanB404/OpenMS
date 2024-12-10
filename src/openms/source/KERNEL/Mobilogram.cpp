@@ -34,16 +34,6 @@ namespace OpenMS
     }
   }
 
-  const String &Mobilogram::getName() const
-  {
-    return name_;
-  }
-
-  void Mobilogram::setName(const String &name)
-  {
-    name_ = name;
-  }
-
   const Mobilogram::FloatDataArrays &Mobilogram::getFloatDataArrays() const
   {
     return float_data_arrays_;

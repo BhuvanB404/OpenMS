@@ -235,18 +235,6 @@ namespace OpenMS
       summed_mobilogram.push_back(summed_peak);
     }
 
-    // Concatenate names of all mobilograms
-    std::string concatenated_name;
-    for (size_t i = 0; i < aligned_mobilograms.size(); ++i) {
-      if (i > 0) {
-        concatenated_name += "|";
-      }
-      concatenated_name += aligned_mobilograms[i].getName();
-    }
-
-    // Set the concatenated name for the summed mobilogram
-    summed_mobilogram.setName(concatenated_name);
-
     return summed_mobilogram;
   }
 
@@ -550,7 +538,6 @@ namespace OpenMS
       //double left(transition.getProductMZ()), right(transition.getProductMZ());
       //DIAHelpers::adjustExtractionWindow(right, left, dia_extract_window_, dia_extraction_ppm_);
       computeIonMobilogram(spectra, mz_range, im_range, im, intensity, res, eps);
-      res.setName(transition.getNativeID());
       ms2_mobilograms.push_back(std::move(res));
 
       // TODO what do to about those that have no signal ?
@@ -599,7 +586,6 @@ namespace OpenMS
       Mobilogram aligned_mobilogram;
       Size max_peak_idx = 0;
       alignToGrid_(mobilogram, im_grid, aligned_mobilogram, eps, max_peak_idx);
-      aligned_mobilogram.setName(mobilogram.getName());
       if (!aligned_mobilogram.empty()) aligned_ms2_mobilograms.push_back(std::move(aligned_mobilogram));
     }
 
@@ -619,7 +605,7 @@ namespace OpenMS
           scores.im_drift_right = im_grid[right];
           filterPeakIntensities(aligned_ms2_mobilograms, left, right);
 
-          OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms for " << summed_mobilogram.getName() << " found peak at " << im_grid[max] << "(" << im_grid[left] << " - " << im_grid[right] << ")" << std::endl;
+          OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms for found peak at " << im_grid[max] << "(" << im_grid[left] << " - " << im_grid[right] << ")" << std::endl;
         }
         else
         {
@@ -711,7 +697,6 @@ namespace OpenMS
 
         RangeMZ detection_mz_range = DIAHelpers::createMZRangePPM(detection_transition.getProductMZ(), dia_extract_window_, dia_extraction_ppm_);
         computeIonMobilogram(spectra, detection_mz_range, im_range, detection_im, detection_intensity, detection_mobilograms, eps);
-        detection_mobilograms.setName(detection_transition.getNativeID());
         mobilograms.push_back( std::move(detection_mobilograms) );
       }
 
@@ -721,7 +706,6 @@ namespace OpenMS
 
       RangeMZ identification_mz_range = DIAHelpers::createMZRangePPM(transition[0].getProductMZ(), dia_extract_window_, dia_extraction_ppm_);
       computeIonMobilogram(spectra, identification_mz_range, im_range, identification_im, identification_intensity, identification_mobilogram, eps);
-      identification_mobilogram.setName(transition[0].getNativeID());
       mobilograms.push_back(identification_mobilogram);
 
       // Check to make sure IM of identification is not -1, otherwise assign 0 for scores
@@ -737,7 +721,6 @@ namespace OpenMS
           Mobilogram aligned_mobilogram;
           Size max_peak_idx = 0;
           alignToGrid_(mobilogram, im_grid, aligned_mobilogram, eps, max_peak_idx);
-          aligned_mobilogram.setName(mobilogram.getName());
           aligned_mobilograms.push_back(std::move(aligned_mobilogram));
         }
 
@@ -759,7 +742,7 @@ namespace OpenMS
             scores.im_drift_right = im_grid[right];
             filterPeakIntensities(aligned_mobilograms, left, right);
 
-            OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms for " << summed_mobilogram.getName() << " found peak at " << im_grid[max] << "(" << im_grid[left] << " - " << im_grid[right] << ")" << std::endl;
+            OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms found peak at " << im_grid[max] << "(" << im_grid[left] << " - " << im_grid[right] << ")" << std::endl;
           }
           else
           {
@@ -775,7 +758,7 @@ namespace OpenMS
                     aligned_identification_mobilogram,
                     eps,
                     max_peak_idx);
-        aligned_identification_mobilogram.setName(transition[0].getNativeID());
+
         if ( apply_im_peak_picking )
         {
           if ( !aligned_identification_mobilogram.empty())
