@@ -241,6 +241,8 @@ namespace OpenMS
 
   This function takes a vector of aligned mobilograms and sums them up to create a single Mobilogram object. The resulting Mobilogram object will contain the sum of the intensity values from all the input mobilograms.
 
+  @note the input vector of Mobilograms all need to have the same size, otherwise the function will throw a pre-condition exception.
+
   @param[in] aligned_mobilograms A vector of aligned mobilograms
   @return  A Mobilogram object that is the sum of the input mobilograms
   */

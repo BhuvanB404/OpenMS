@@ -215,15 +215,25 @@ namespace OpenMS
   {
     if (aligned_mobilograms.empty()) return {};
 
-    OpenMS::Mobilogram summed_mobilogram;
+    const size_t reference_size = aligned_mobilograms[0].size();
+
+    OPENMS_PRECONDITION(
+        std::all_of(aligned_mobilograms.begin() + 1, aligned_mobilograms.end(),
+                    [reference_size](const OpenMS::Mobilogram& mobilogram) {
+                        return mobilogram.size() == reference_size;
+                    }),
+        "All Mobilograms in aligned_mobilograms must have the same size."
+    );
+
+    Mobilogram summed_mobilogram;
 
     // Use the first mobilogram to set the structure
     const auto& first_mobilogram = aligned_mobilograms[0];
+    // Reserve space in advance
+    summed_mobilogram.reserve(first_mobilogram.size()); 
 
     for (size_t j = 0; j < first_mobilogram.size(); ++j) {
-      OpenMS::MobilityPeak1D summed_peak;
-      summed_peak.setMobility(first_mobilogram[j].getMobility());
-      summed_peak.setIntensity(0.0); 
+      MobilityPeak1D summed_peak{first_mobilogram[j].getMobility(), 0.0}; 
 
       // Sum intensities from all mobilograms
       for (const auto& mobilogram : aligned_mobilograms) {
