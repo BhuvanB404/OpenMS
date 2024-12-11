@@ -255,11 +255,7 @@ namespace OpenMS
     // Create a temporary vector to hold the filtered peaks
     std::vector<MobilityPeak1D> filtered_peaks;
 
-    // Ensure the indices are within bounds
-    size_t start = std::max(left_index, static_cast<size_t>(0));
-    size_t end = std::min(right_index, mobilogram.size() - 1);
-
-    for (size_t i = start; i <= end; ++i) {
+    for (size_t i = left_index; i <= right_index; ++i) {
       const auto& peak = mobilogram[i];
       // Collect the peaks within the range
       filtered_peaks.push_back(peak); 
@@ -280,11 +276,7 @@ namespace OpenMS
       // Create a temporary vector to hold the filtered peaks
       std::vector<MobilityPeak1D> filtered_peaks;
 
-      // Ensure the indices are within bounds
-      size_t start = std::max(left_index, static_cast<size_t>(0));
-      size_t end = std::min(right_index, mobilogram.size() - 1);
-
-      for (size_t i = start; i <= end; ++i) {
+      for (size_t i = left_index; i <= right_index; ++i) {
         const auto& peak = mobilogram[i];
         // Collect the peaks within the range
         filtered_peaks.push_back(peak); 
