@@ -50,7 +50,7 @@ namespace OpenMS
         // PeakPickerHiRes pp_;
         Param pepi_param = pp_.getDefaults();
         pepi_param.setValue("signal_to_noise", signal_to_noise_);
-        // disable spacing constraints, since we're dealing with chromatograms
+        // disable spacing constraints, since we're dealing with mobilograms
         pepi_param.setValue("spacing_difference", 0.0);
         pepi_param.setValue("spacing_difference_gap", 0.0);
         pepi_param.setValue("report_FWHM", "true");
