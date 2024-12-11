@@ -473,7 +473,6 @@ namespace OpenMS
                                            RangeMobility im_range,
                                            const double dia_extract_window_,
                                            const bool dia_extraction_ppm_,
-                                           const bool /* use_spline */,
                                            const double drift_extra)
   {
     OPENMS_PRECONDITION(!spectra.empty(), "Spectra cannot be empty")
@@ -509,7 +508,6 @@ namespace OpenMS
                                         RangeMobility im_range,
                                         const double dia_extract_window_,
                                         const bool dia_extraction_ppm_,
-                                        const bool /* use_spline */,
                                         const double drift_extra,
                                         const bool apply_im_peak_picking)
   {
@@ -652,7 +650,6 @@ namespace OpenMS
                                           RangeMobility im_range,
                                           const double dia_extract_window_,
                                           const bool dia_extraction_ppm_,
-                                          const bool /* use_spline */,
                                           const double drift_extra,
                                           const bool apply_im_peak_picking)
   {

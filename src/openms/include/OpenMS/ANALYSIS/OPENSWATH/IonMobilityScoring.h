@@ -71,7 +71,6 @@ namespace OpenMS
       @param im_range Ion Mobility extraction range
       @param dia_extraction_window_ m/z extraction width
       @param dia_extraction_ppm_ Whether m/z extraction width is in ppm
-      @param use_spline Whether to use spline for fitting
       @param drift_extra Extend the extraction window to gain a larger field of view beyond drift_upper - drift_lower (in percent)
       @param apply_im_peak_picking Apply peak picking on the ion mobilogram
     */
@@ -82,7 +81,6 @@ namespace OpenMS
                              RangeMobility im_range,
                              const double dia_extraction_window_,
                              const bool dia_extraction_ppm_,
-                             const bool use_spline,
                              const double drift_extra,
                              const bool apply_im_peak_picking);
 
@@ -98,7 +96,6 @@ namespace OpenMS
       @param drift_target Ion Mobility extraction target
       @param dia_extraction_window_ m/z extraction width
       @param dia_extraction_ppm_ Whether m/z extraction width is in ppm
-      @param use_spline Whether to use spline for fitting
       @param drift_extra Extra extraction to use for drift time (in percent)
     */
     static void driftScoringMS1(const SpectrumSequence& spectra,
@@ -108,7 +105,6 @@ namespace OpenMS
                                 RangeMobility im_range,
                                 const double dia_extraction_window_,
                                 const bool dia_extraction_ppm_,
-                                const bool use_spline,
                                 const double drift_extra);
 
     /**
@@ -144,7 +140,6 @@ namespace OpenMS
       @param drift_target Ion Mobility extraction target
       @param dia_extraction_window_ m/z extraction width
       @param dia_extraction_ppm_ Whether m/z extraction width is in ppm
-      @param use_spline Whether to use spline for fitting
       @param drift_extra Extra extraction to use for drift time (in percent)
       @param apply_im_peak_picking Apply peak pickng on the ion mobilogram
 
@@ -158,7 +153,6 @@ namespace OpenMS
                                 RangeMobility im_range,
                                 const double dia_extract_window_,
                                 const bool dia_extraction_ppm_,
-                                const bool use_spline,
                                 const double drift_extra,
                                 const bool apply_im_peak_picking);
 

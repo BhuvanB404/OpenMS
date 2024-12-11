@@ -197,7 +197,6 @@ START_SECTION(([EXTRA]
                              const RangeMobility im_range,
                              const double dia_extraction_window_,
                              const bool dia_extraction_ppm_,
-                             const bool use_spline,
                              const double drift_extra) ))
 {
   OpenSwath_Scores scores;
@@ -334,7 +333,6 @@ START_SECTION([EXTRA]
                                 const double drift_target,
                                 const double dia_extract_window_,
                                 const bool dia_extraction_ppm_,
-                                const bool use_spline,
                                 const double drift_extra))
 {
   OpenSwath_Scores scores;
@@ -357,7 +355,7 @@ START_SECTION([EXTRA]
   IonMobilityScoring::driftScoringMS1(sptrArr, transitions, scores,
                                    drift_target, im_range,
                                    dia_extract_window_, dia_extraction_ppm_,
-                                   false, im_drift_extra_pcnt_);
+                                   im_drift_extra_pcnt_);
 
   OpenSwath::BinaryDataArrayPtr mass(new OpenSwath::BinaryDataArray);
   OpenSwath::BinaryDataArrayPtr intensity(new OpenSwath::BinaryDataArray);
@@ -370,7 +368,7 @@ START_SECTION([EXTRA]
   IonMobilityScoring::driftScoringMS1(sptrArr2, transitions, scores,
                                    drift_target, im_range,
                                    dia_extract_window_, dia_extraction_ppm_,
-                                   false, im_drift_extra_pcnt_);
+                                   im_drift_extra_pcnt_);
 
   drift_spectrum = ms1spec;
 
@@ -384,7 +382,7 @@ START_SECTION([EXTRA]
   IonMobilityScoring::driftScoringMS1(sptrArr3, transitions, scores,
                                    drift_target, im_range,
                                    dia_extract_window_, dia_extraction_ppm_,
-                                   false, im_drift_extra_pcnt_);
+                                   im_drift_extra_pcnt_);
 
   TEST_REAL_SIMILAR(scores.im_ms1_delta_score, 0.7)
 }
@@ -399,7 +397,6 @@ START_SECTION(([EXTRA]
                              const double drift_target,
                              const double dia_extraction_window_,
                              const bool dia_extraction_ppm_,
-                             const bool use_spline,
                              const double drift_extra) ))
 {
   OpenSwath_Scores scores;

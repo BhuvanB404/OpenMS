@@ -103,7 +103,7 @@ namespace OpenMS
       IonMobilityScoring::driftScoring(spectra, transitions, scores,
                                        drift_target, im_range,
                                        dia_extract_window_, dia_extraction_ppm_,
-                                       false, im_drift_extra_pcnt_, apply_im_peak_picking_);
+                                       im_drift_extra_pcnt_, apply_im_peak_picking_);
     }
 
 
@@ -165,7 +165,7 @@ namespace OpenMS
 
         std::vector<OpenSwath::SpectrumPtr> ms1_spectrum = fetchSpectrumSwath(ms1_map, rt, add_up_spectra_, im_range_ms1);
         IonMobilityScoring::driftScoringMS1(ms1_spectrum,
-            transitions, scores, drift_target, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, false, im_drift_extra_pcnt_);
+            transitions, scores, drift_target, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, im_drift_extra_pcnt_);
 
         IonMobilityScoring::driftScoringMS1Contrast(spectra, ms1_spectrum,
             transitions, scores, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, im_drift_extra_pcnt_);
@@ -315,7 +315,7 @@ namespace OpenMS
       IonMobilityScoring::driftIdScoring(spectrum, transitionVector, trgr_detect, scores,
                                        drift_target, im_range,
                                        dia_extract_window_, dia_extraction_ppm_,
-                                       false, im_drift_extra_pcnt_, apply_im_peak_picking_);
+                                       im_drift_extra_pcnt_, apply_im_peak_picking_);
     }
   }
 
