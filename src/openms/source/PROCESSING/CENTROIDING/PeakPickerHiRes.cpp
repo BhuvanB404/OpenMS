@@ -164,9 +164,9 @@ namespace OpenMS
     // find local maxima in profile data
     for (Size i = 2; i < input.size() - 2; ++i)
     {
-      double central_peak_mz = input[i].getMZ(), central_peak_int = input[i].getIntensity();
-      double left_neighbor_mz = input[i - 1].getMZ(), left_neighbor_int = input[i - 1].getIntensity();
-      double right_neighbor_mz = input[i + 1].getMZ(), right_neighbor_int = input[i + 1].getIntensity();
+      double central_peak_mz = input[i].getPos(), central_peak_int = input[i].getIntensity();
+      double left_neighbor_mz = input[i - 1].getPos(), left_neighbor_int = input[i - 1].getIntensity();
+      double right_neighbor_mz = input[i + 1].getPos(), right_neighbor_int = input[i + 1].getIntensity();
 
       // do not interpolate when the left or right support is a zero-data-point
       if (std::fabs(left_neighbor_int) < std::numeric_limits<double>::epsilon())
@@ -224,8 +224,8 @@ namespace OpenMS
           (act_snt_l2 >= signal_to_noise_) &&
           (act_snt_r2 >= signal_to_noise_) &&
           (!check_spacings ||
-          ((left_neighbor_mz - input[i - 2].getMZ() < spacing_difference_ * min_spacing) && 
-            (input[i + 2].getMZ() - right_neighbor_mz < spacing_difference_ * min_spacing))))
+          ((left_neighbor_mz - input[i - 2].getPos() < spacing_difference_ * min_spacing) && 
+            (input[i + 2].getPos() - right_neighbor_mz < spacing_difference_ * min_spacing))))
         {
           ++i;
           continue;
@@ -259,7 +259,7 @@ namespace OpenMS
           (missing_left <= missing_) && 
           (input[i - k].getIntensity() <= peak_raw_data.begin()->second) &&
           (!check_spacings || 
-          (peak_raw_data.begin()->first - input[i - k].getMZ() < spacing_difference_gap_ * min_spacing)))
+          (peak_raw_data.begin()->first - input[i - k].getPos() < spacing_difference_gap_ * min_spacing)))
         {
           double act_snt_lk = 0.0;
 
@@ -270,9 +270,9 @@ namespace OpenMS
 
           if ((act_snt_lk >= signal_to_noise_) && 
             (!check_spacings ||
-            (peak_raw_data.begin()->first - input[i - k].getMZ() < spacing_difference_ * min_spacing)))
+            (peak_raw_data.begin()->first - input[i - k].getPos() < spacing_difference_ * min_spacing)))
           {
-            peak_raw_data[input[i - k].getMZ()] = input[i - k].getIntensity();
+            peak_raw_data[input[i - k].getPos()] = input[i - k].getIntensity();
             if (has_im) weighted_im += input.getFloatDataArrays()[im_data_index][i - k] * input[i - k].getIntensity();
           }
           else
@@ -280,7 +280,7 @@ namespace OpenMS
             ++missing_left;
             if (missing_left <= missing_)
             {
-              peak_raw_data[input[i - k].getMZ()] = input[i - k].getIntensity();
+              peak_raw_data[input[i - k].getPos()] = input[i - k].getIntensity();
               if (has_im) weighted_im += input.getFloatDataArrays()[im_data_index][i - k] * input[i - k].getIntensity();
             }
           }
@@ -302,7 +302,7 @@ namespace OpenMS
           (missing_right <= missing_) && 
           (input[i + k].getIntensity() <= peak_raw_data.rbegin()->second) &&
           (!check_spacings ||
-          (input[i + k].getMZ() - peak_raw_data.rbegin()->first < spacing_difference_gap_ * min_spacing)))
+          (input[i + k].getPos() - peak_raw_data.rbegin()->first < spacing_difference_gap_ * min_spacing)))
         {
           double act_snt_rk = 0.0;
 
@@ -313,9 +313,9 @@ namespace OpenMS
 
           if ((act_snt_rk >= signal_to_noise_) && 
             (!check_spacings ||
-            (input[i + k].getMZ() - peak_raw_data.rbegin()->first < spacing_difference_ * min_spacing)))
+            (input[i + k].getPos() - peak_raw_data.rbegin()->first < spacing_difference_ * min_spacing)))
           {
-            peak_raw_data[input[i + k].getMZ()] = input[i + k].getIntensity();
+            peak_raw_data[input[i + k].getPos()] = input[i + k].getIntensity();
             if (has_im) weighted_im += input.getFloatDataArrays()[im_data_index][i + k] * input[i + k].getIntensity();
           }
           else
@@ -323,7 +323,7 @@ namespace OpenMS
             ++missing_right;
             if (missing_right <= missing_)
             {
-              peak_raw_data[input[i + k].getMZ()] = input[i + k].getIntensity();
+              peak_raw_data[input[i + k].getPos()] = input[i + k].getIntensity();
               if (has_im) weighted_im += input.getFloatDataArrays()[im_data_index][i + k] * input[i + k].getIntensity();
             }
           }
@@ -420,10 +420,10 @@ namespace OpenMS
         // save picked peak into output spectrum
         typename ContainerType::PeakType peak;
         PeakBoundary peak_boundary;
-        peak.setMZ(max_peak_mz);
+        peak.setPos(max_peak_mz);
         peak.setIntensity(max_peak_int);
-        peak_boundary.mz_min = input[left_boundary].getMZ();
-        peak_boundary.mz_max = input[right_boundary].getMZ();
+        peak_boundary.mz_min = input[left_boundary].getPos();
+        peak_boundary.mz_max = input[right_boundary].getPos();
         output.push_back(peak);
 
         boundaries.push_back(peak_boundary);
