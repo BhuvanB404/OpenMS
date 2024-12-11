@@ -85,7 +85,7 @@ namespace OpenMS
     defaults_.setValue("strict", "true", "Whether to error (true) or skip (false) if a transition in a transition group does not have a corresponding chromatogram.", {"advanced"});
     defaults_.setValidStrings("strict", {"true","false"});
     defaults_.setValue("use_ms1_ion_mobility", "true", "Performs ion mobility extraction in MS1. Set to false if MS1 spectra do not contain ion mobility", {"advanced"});
-    defaults_.setValue("apply_im_peak_picking", "true", "Whether to apply peaking picking on the ion mobilograms.", {"advanced"});
+    defaults_.setValue("apply_im_peak_picking", "true", "Perform peak picking on the extracted ion mobilograms. This is useful for reducing intefering signals from co-eluting analytes in the ion mobility dimension. The peak picking will take the highest peak and discard the remaining peaks for ion mobility scoring. ", {"advanced"});
     defaults_.setValidStrings("apply_im_peak_picking", {"true","false"});
 
     defaults_.insert("TransitionGroupPicker:", MRMTransitionGroupPicker().getDefaults());
