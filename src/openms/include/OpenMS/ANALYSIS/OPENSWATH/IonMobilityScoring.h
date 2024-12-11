@@ -62,6 +62,8 @@ namespace OpenMS
 
       Populates additional scores in the @p scores object
 
+      If @p apply_im_peak_picking is set to true, peak picking is performed on the Savitzky-Golay smoothed ion mobilogram. This is useful for minimizing interference from co-eluting analytes in the ion mobility dimension (IM) that fall within the current extraction window. This process improves the specificity of analyte detection by dynamically adjusting the IM extraction window to extract only over the IM elution of the highest intensity species. If multiple peaks are present in the IM dimension, lower intensity peaks get discarded.
+
       @param spectra Sequence of segments of the DIA MS2 spectrum found at (and around) the peak apex
       @param transitions The transitions used for scoring
       @param scores The output scores
