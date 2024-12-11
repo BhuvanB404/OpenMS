@@ -169,6 +169,14 @@ namespace OpenMS
 
   };
 
+  /**
+   * @brief A structure to hold the individual scores computed for unique ion signatures (UIS) scores for the Inference of Peptidoforms (IPF) workflow
+   * 
+   * Most of the scores are computed for each individual identifying transition (theoretical transitions) against the peak-group detection transitions.
+   * 
+   * This struct also holds peak shape metrics for each individual transition.
+   * 
+   */
   struct OPENMS_DLLAPI OpenSwath_Ind_Scores
   {
     int ind_num_transitions = 0;
