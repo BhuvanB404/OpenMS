@@ -26,9 +26,9 @@
 namespace OpenMS
 {
     /**
-    @brief The PeakPickerChromatogram finds peaks a single mobilogram.
+    @brief The PeakPickerMobilogram finds peaks a single mobilogram.
 
-    @htmlinclude OpenMS_PeakPickerChromatogram.parameters
+    @htmlinclude OpenMS_PeakPickerMobilogram.parameters
 
     It uses the PeakPickerHiRes internally to find interesting seed candidates.
     These candidates are then expanded and a right/left border of the peak is
@@ -52,6 +52,13 @@ namespace OpenMS
         /// indices into FloatDataArrays of resulting picked mobilogram
         enum FLOATINDICES { IDX_FWHM = 0, IDX_ABUNDANCE = 1, IDX_LEFTBORDER = 2, IDX_RIGHTBORDER = 3, SIZE_OF_FLOATINDICES };
 
+        /// Struct to hold peak positions
+        struct PeakPositions {
+            size_t left;    // Left position of the peak
+            size_t apex;    // Apex (highest point) position of the peak
+            size_t right;   // Right position of the peak
+        };
+
         /**
             @brief Finds peaks in a single mobilogram and annotates left/right borders
 
@@ -69,6 +76,26 @@ namespace OpenMS
             This function will return a picked mobilogram and a smoothed mobilogram
         */
         void pickMobilogram(Mobilogram mobilogram, Mobilogram& picked_mobilogram, Mobilogram& smoothed_mobilogram);
+
+        /**
+          @brief Helper function to find the highest peak in a mobilogram
+
+          This function takes the integrated intensities, left widths, right widths from the peak picker and finds the highest peak in the mobilogram. The left, apex, and right positions of the highest peak are returned.
+
+          If the peak picker found no peaks (i.e. intensities is empty), the returned PeakPositions object will have it's left, apex, and right set based on the input im_size. The peak picker could fail if the input mobilogram is sparse.
+
+          @note The left, apex, and right positions are indices into the mobilogram.
+
+          @param[in] intensities A vector of doubles containing the intensities of the peaks in the mobilogram
+          @param[in] left_widths A vector of Size values containing the left widths of the peaks in the mobilogram
+          @param[in] right_widths A vector of Size values containing the right widths of the peaks in the mobilogram
+          @param[in] im_size The size/length of the mobilogram
+          @return A PeakPositions object containing the left, apex, and right positions of the highest peak in the mobilogram
+        */
+        static PeakPositions findHighestPeak(const std::vector<double> intensities,
+                                       const std::vector<Size> left_widths,
+                                       const std::vector<Size> right_widths,
+                                       const size_t im_size);
 
         /// Temporary vector to hold the integrated intensities
         std::vector<double> integrated_intensities_;

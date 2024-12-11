@@ -245,16 +245,6 @@ namespace OpenMS
   OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms);
 
   /*
-  @brief Helper function to find the highest peak in a mobilogram
-
-  This function takes a PeakPickerMobilogram object and returns the left position, apex position, and right position of the highest peak in the mobilogram.
-
-  @param[in] picker A PeakPickerMobilogram object
-  @return A tuple containing the left position, apex position, and right position of the highest peak in the mobilogram
-  */
-  std::tuple<size_t, size_t, size_t> findHighestPeak(const PeakPickerMobilogram& picker);
-
-  /*
   @brief Helper function to filter peak intensities in a mobilogram
 
   This function takes a mobilogram and filters the peak intensities based on the left and right indices provided.

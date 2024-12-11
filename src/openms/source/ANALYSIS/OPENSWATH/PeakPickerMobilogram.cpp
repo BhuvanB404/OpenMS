@@ -136,6 +136,28 @@ namespace OpenMS
 
     }
 
+    PeakPickerMobilogram::PeakPositions PeakPickerMobilogram::findHighestPeak(const std::vector<double> intensities,
+                                                                              const std::vector<Size> left_widths,
+                                                                              const std::vector<Size> right_widths,
+                                                                              const size_t im_size)
+    {
+      // If no peaks were found, return a peak at the center of the mobilogram
+      if (intensities.empty())
+      {
+        OPENMS_LOG_DEBUG << "No peaks found in mobilogram. Returning peak at center of original mobilogram." << std::endl;
+        return PeakPickerMobilogram::PeakPositions{0, im_size / 2, im_size-1};
+      }
+
+      // Find the iterator pointing to the maximum element
+      auto max_it = std::max_element(intensities.begin(), intensities.end());
+
+      // Get the index of the maximum element
+      size_t max_index = std::distance(intensities.begin(), max_it);
+
+      // Return the tuple
+      return PeakPickerMobilogram::PeakPositions{left_widths[max_index], max_index, right_widths[max_index]};
+    }
+
     void PeakPickerMobilogram::pickMobilogram_(const Mobilogram& mobilogram, Mobilogram& picked_mobilogram)
     {
 
@@ -149,15 +171,15 @@ namespace OpenMS
         Size current_peak = 0;
         for (Size i = 0; i < picked_mobilogram.size(); i++)
         {
-          const double central_peak_rt = picked_mobilogram[i].getMobility();
-          current_peak = findClosestPeak_(mobilogram, central_peak_rt, current_peak);
+          const double central_peak_im = picked_mobilogram[i].getMobility();
+          current_peak = findClosestPeak_(mobilogram, central_peak_im, current_peak);
           const Size min_i = current_peak;
 
           // peak core found, now extend it to the left
           Size k = 2;
           while ((min_i - k + 1) > 0
                  && (mobilogram[min_i - k].getIntensity() < mobilogram[min_i - k + 1].getIntensity()
-                     || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i - k].getMobility() - central_peak_rt) < peak_width_)))
+                     || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i - k].getMobility() - central_peak_im) < peak_width_)))
           {
             ++k;
           }
@@ -167,7 +189,7 @@ namespace OpenMS
           k = 2;
           while ((min_i + k) < mobilogram.size()
                  && (mobilogram[min_i + k].getIntensity() < mobilogram[min_i + k - 1].getIntensity()
-                     || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i + k].getMobility() - central_peak_rt) < peak_width_)))
+                     || (peak_width_ > 0.0 && std::fabs(mobilogram[min_i + k].getMobility() - central_peak_im) < peak_width_)))
           {
             ++k;
           }
@@ -177,7 +199,7 @@ namespace OpenMS
           right_width_.push_back(right_idx);
           integrated_intensities_.push_back(0);
 
-          OPENMS_LOG_DEBUG << "Found peak at " << central_peak_rt << " with intensity "  << picked_mobilogram[i].getIntensity()
+          OPENMS_LOG_DEBUG << "Found peak at " << central_peak_im << " with intensity "  << picked_mobilogram[i].getIntensity()
                            << " and borders " << mobilogram[left_width_[i]].getMobility() << " " << mobilogram[right_width_[i]].getMobility() <<
             " (" << mobilogram[right_width_[i]].getMobility() - mobilogram[left_width_[i]].getMobility() << ") "
                            << 0 << " weighted IM " << /* weighted_mz << */ std::endl;
@@ -205,7 +227,7 @@ namespace OpenMS
     {
       while (current_peak < mobilogram.size())
       {
-        // check if we have walked past the RT of the peak
+        // check if we have walked past the IM of the peak
         if (target_im < mobilogram[current_peak].getMobility())
         {
           // see which one is closer, the current one or the one before
@@ -243,7 +265,7 @@ namespace OpenMS
           OPENMS_LOG_DEBUG << " Found overlapping " << i << " : " << current_left_idx << " " << current_right_idx << std::endl;
           OPENMS_LOG_DEBUG << "                   -- with  " << i + 1 << " : " << next_left_idx << " " << next_right_idx << std::endl;
 
-          // Find the peak width and best RT
+          // Find the peak width and best IM
           double central_peak_mz = picked_mobilogram[i].getMobility();
           double next_peak_mz = picked_mobilogram[i + 1].getMobility();
           current_peak = findClosestPeak_(mobilogram, central_peak_mz, current_peak);
