@@ -252,16 +252,6 @@ namespace OpenMS
                                size_t left_index,
                                size_t right_index) 
   {
-    // Check if indices are valid (indicating peaks were found)
-    bool peaksFound = (left_index != std::numeric_limits<size_t>::max() &&
-                        right_index != 0 &&
-                        left_index <= right_index);
-
-    // If no peaks were found, return without filtering
-    if (!peaksFound) {
-      return; 
-    }
-
     // Create a temporary vector to hold the filtered peaks
     std::vector<MobilityPeak1D> filtered_peaks;
 
@@ -286,16 +276,6 @@ namespace OpenMS
                                size_t left_index,
                                size_t right_index) 
   {
-    // Check if indices are valid (indicating peaks were found)
-    bool peaksFound = (left_index != std::numeric_limits<size_t>::max() &&
-                        right_index != 0 &&
-                        left_index <= right_index);
-
-    // If no peaks were found, return without filtering
-    if (!peaksFound) {
-      return; 
-    }
-
     for (auto& mobilogram : mobilograms) {
       // Create a temporary vector to hold the filtered peaks
       std::vector<MobilityPeak1D> filtered_peaks;
@@ -575,7 +555,8 @@ namespace OpenMS
 
     if ( apply_im_peak_picking ) {
       PeakPickerMobilogram::PeakPositions peak_pos{};
-      if ( !aligned_ms2_mobilograms.empty())
+      // Ion mobilogram cannot be empty and cannot have a single point
+      if ( !aligned_ms2_mobilograms.empty() && aligned_ms2_mobilograms[0].size()!=1 )
       {
         Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_ms2_mobilograms);
         PeakPickerMobilogram picker_;
@@ -713,7 +694,8 @@ namespace OpenMS
         PeakPickerMobilogram::PeakPositions peak_pos{};
         if ( apply_im_peak_picking ) 
         {
-          if ( !aligned_mobilograms.empty())
+          // Ion mobilogram cannot be empty and cannot have a single point
+          if ( !aligned_mobilograms.empty() && aligned_mobilograms[0].size()!=1 )
           {
             Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_mobilograms);
 
@@ -747,7 +729,8 @@ namespace OpenMS
 
         if ( apply_im_peak_picking )
         {
-          if ( !aligned_identification_mobilogram.empty())
+          // Ion mobilogram cannot be empty and cannot have a single point
+          if ( !aligned_identification_mobilogram.empty() && aligned_identification_mobilogram.size()!=1 )
           {
             filterPeakIntensities(aligned_identification_mobilogram, peak_pos.left, peak_pos.right);
           }
