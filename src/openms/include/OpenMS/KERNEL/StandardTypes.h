@@ -41,12 +41,6 @@ namespace OpenMS
   */
   typedef MSChromatogram Chromatogram;
 
-  /**
-      @brief Mobilogram consisting of raw data points or peaks
-    
-      @ingroup Kernel
-  */
-  typedef Mobilogram Mobilogram;
   //@}
 
 }
