@@ -329,11 +329,5 @@ namespace OpenMS
         Param gfilter_parameters = gauss_.getParameters();
         gfilter_parameters.setValue("gaussian_width", gauss_width_);
         gauss_.setParameters(gfilter_parameters);
-
-        Param snt_parameters = snt_.getParameters();
-        snt_parameters.setValue("win_len", sn_win_len_);
-        snt_parameters.setValue("bin_count", sn_bin_count_);
-        snt_parameters.setValue("write_log_messages", param_.getValue("write_sn_log_messages"));
-        snt_.setParameters(snt_parameters);
     }
 }

@@ -162,6 +162,5 @@ namespace OpenMS
         PeakPickerHiRes pp_;
         SavitzkyGolayFilter sgolay_;
         GaussFilter gauss_;
-        SignalToNoiseEstimatorMedian<Mobilogram > snt_;
     };
 }
