@@ -233,6 +233,7 @@ private:
      * reported analogously to the ones for detecting transitions but must be stored separately.
      *
      * @param transition_group_identification Containing all detecting and identifying transitions
+     * @param transition_group_detection Containing all detecting transitions
      * @param scorer An instance of OpenSwathScoring
      * @param feature_idx The index of the current feature
      * @param native_ids_detection The native IDs of the detecting transitions
