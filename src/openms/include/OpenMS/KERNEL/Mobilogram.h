@@ -575,9 +575,6 @@ namespace OpenMS
     /// Retention time
     double retention_time_ = -1;
 
-    /// Name
-    String name_;
-
     /// Drift time unit
     DriftTimeUnit drift_time_unit_ = DriftTimeUnit::NONE;
 
