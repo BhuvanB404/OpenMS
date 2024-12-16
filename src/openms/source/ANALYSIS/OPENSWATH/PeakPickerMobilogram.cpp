@@ -123,39 +123,33 @@ namespace OpenMS
       picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].setName("IntegratedIntensity");
       picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].setName("leftWidth");
       picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].setName("rightWidth");
+      picked_mobilogram.getFloatDataArrays()[IDX_OF_LEFTBORDER_IDX].setName("leftWidthIndex");
+      picked_mobilogram.getFloatDataArrays()[IDX_OF_RIGHTBORDER_IDX].setName("rightWidthIndex");
       // just copy FWHM from initial peak picking
       picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].reserve(picked_mobilogram.size());
       picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].reserve(picked_mobilogram.size());
       picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].reserve(picked_mobilogram.size());
+      picked_mobilogram.getFloatDataArrays()[IDX_OF_LEFTBORDER_IDX].reserve(picked_mobilogram.size());
+      picked_mobilogram.getFloatDataArrays()[IDX_OF_RIGHTBORDER_IDX].reserve(picked_mobilogram.size());
       for (Size i = 0; i < picked_mobilogram.size(); i++)
       {
         picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE].push_back(integrated_intensities_[i]);
         picked_mobilogram.getFloatDataArrays()[IDX_LEFTBORDER].push_back((float)mobilogram[left_width_[i]].getMobility());
         picked_mobilogram.getFloatDataArrays()[IDX_RIGHTBORDER].push_back((float)mobilogram[right_width_[i]].getMobility());
+        picked_mobilogram.getFloatDataArrays()[IDX_OF_LEFTBORDER_IDX].push_back(left_width_[i]);
+        picked_mobilogram.getFloatDataArrays()[IDX_OF_RIGHTBORDER_IDX].push_back(right_width_[i]);
       }
 
     }
 
-    PeakPickerMobilogram::PeakPositions PeakPickerMobilogram::findHighestPeak(const std::vector<double> intensities,
-                                                                              const std::vector<Size> left_widths,
-                                                                              const std::vector<Size> right_widths,
-                                                                              const size_t im_size)
+    void PeakPickerMobilogram::filterTopPeak(Mobilogram& picked_mobilogram, std::vector<Mobilogram>& mobilograms, PeakPickerMobilogram::PeakPositions& peak_pos)
     {
-      // If no peaks were found, return a peak at the center of the mobilogram
-      if (intensities.empty())
-      {
-        OPENMS_LOG_DEBUG << "No peaks found in mobilogram. Returning peak at center of original mobilogram." << std::endl;
-        return PeakPickerMobilogram::PeakPositions{0, im_size / 2, im_size-1};
-      }
+      peak_pos = filterTopPeak_(picked_mobilogram, mobilograms);
+    }
 
-      // Find the iterator pointing to the maximum element
-      auto max_it = std::max_element(intensities.begin(), intensities.end());
-
-      // Get the index of the maximum element
-      size_t max_index = std::distance(intensities.begin(), max_it);
-
-      // Return the tuple
-      return PeakPickerMobilogram::PeakPositions{left_widths[max_index], max_index, right_widths[max_index]};
+    void PeakPickerMobilogram::filterTopPeak(Mobilogram& picked_mobilogram, Mobilogram& mobilogram, PeakPickerMobilogram::PeakPositions& peak_pos)
+    {
+      peak_pos = filterTopPeak_(picked_mobilogram, mobilogram);
     }
 
     void PeakPickerMobilogram::pickMobilogram_(const Mobilogram& mobilogram, Mobilogram& picked_mobilogram)
@@ -204,7 +198,6 @@ namespace OpenMS
             " (" << mobilogram[right_width_[i]].getMobility() - mobilogram[left_width_[i]].getMobility() << ") "
                            << 0 << " weighted IM " << /* weighted_mz << */ std::endl;
         }
-
     }
 
     void PeakPickerMobilogram::integratePeaks_(const Mobilogram& mobilogram)
@@ -243,6 +236,132 @@ namespace OpenMS
         current_peak++;
       }
       return current_peak;
+    }
+
+    PeakPickerMobilogram::PeakPositions PeakPickerMobilogram::findHighestPeak_(const std::vector<double> intensities,
+                                                                              const std::vector<Size> left_widths,
+                                                                              const std::vector<Size> right_widths,
+                                                                              const size_t im_size)
+    {
+      // If no peaks were found, return a peak at the center of the mobilogram
+      if (intensities.empty())
+      {
+        OPENMS_LOG_DEBUG << "No peaks found in mobilogram. Returning peak at center of original mobilogram." << std::endl;
+        return PeakPickerMobilogram::PeakPositions{0, im_size / 2, im_size-1};
+      }
+
+      // Find the iterator pointing to the maximum element
+      auto max_it = std::max_element(intensities.begin(), intensities.end());
+
+      // Get the index of the maximum element
+      size_t max_index = std::distance(intensities.begin(), max_it);
+
+      // Return the tuple
+      return PeakPickerMobilogram::PeakPositions{left_widths[max_index], max_index, right_widths[max_index]};
+    }
+
+    void PeakPickerMobilogram::filterPeakIntensities_(Mobilogram& mobilogram,
+                               size_t left_index,
+                               size_t right_index) 
+    {
+      // Create a temporary vector to hold the filtered peaks
+      std::vector<MobilityPeak1D> filtered_peaks;
+
+      for (size_t i = left_index; i <= right_index; ++i) {
+        const auto& peak = mobilogram[i];
+        // Collect the peaks within the range
+        filtered_peaks.push_back(peak); 
+      }
+
+      // Clear existing data and replace with filtered peaks
+      mobilogram.clear();
+      for (const auto& peak : filtered_peaks) {
+        mobilogram.push_back(peak);
+      }
+    }
+
+    void PeakPickerMobilogram::filterPeakIntensities_(std::vector<Mobilogram>& mobilograms,
+                                size_t left_index,
+                                size_t right_index) 
+    {
+      for (auto& mobilogram : mobilograms) {
+        // Create a temporary vector to hold the filtered peaks
+        std::vector<MobilityPeak1D> filtered_peaks;
+
+        for (size_t i = left_index; i <= right_index; ++i) {
+          const auto& peak = mobilogram[i];
+          // Collect the peaks within the range
+          filtered_peaks.push_back(peak); 
+        }
+
+        // Clear existing data and replace with filtered peaks
+        mobilogram.clear(); 
+        for (const auto& peak : filtered_peaks) {
+          mobilogram.push_back(peak);
+        }
+      }
+    }
+
+    std::vector<double> PeakPickerMobilogram::extractFloatValues_(const OpenMS::DataArrays::FloatDataArray& floatDataArray)
+    {
+      std::vector<double> result;
+
+      if (floatDataArray.empty()) {
+        return result;
+      }
+
+      result.reserve(floatDataArray.size()); 
+
+      for (size_t i = 0; i < floatDataArray.size(); ++i) {
+        result.push_back(static_cast<double>(floatDataArray[i])); 
+      }
+
+      return result;
+    }
+
+    std::vector<std::size_t> PeakPickerMobilogram::extractIntValues_(const OpenMS::DataArrays::FloatDataArray& floatDataArray)
+    {
+      std::vector<std::size_t> result;
+
+      if (floatDataArray.empty()) {
+        return result;
+      }
+
+      result.reserve(floatDataArray.size());
+
+      for (size_t i = 0; i < floatDataArray.size(); ++i) {
+        result.push_back(static_cast<std::size_t>(floatDataArray[i])); // Convert and add to vector
+      }
+
+      return result;
+    }
+
+    PeakPickerMobilogram::PeakPositions PeakPickerMobilogram::filterTopPeak_(Mobilogram& picked_mobilogram, std::vector<Mobilogram>& mobilograms)
+    {
+      const auto& apex_abundance_data = extractFloatValues_(picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE]);
+      const auto& leftwidth_data = extractIntValues_(picked_mobilogram.getFloatDataArrays()[IDX_OF_LEFTBORDER_IDX]);
+      const auto& rightwidth_data = extractIntValues_(picked_mobilogram.getFloatDataArrays()[IDX_OF_RIGHTBORDER_IDX]);
+      PeakPositions peak_pos = findHighestPeak_(apex_abundance_data, leftwidth_data, rightwidth_data, mobilograms[0].size());
+
+      OPENMS_LOG_DEBUG << "  -- filtering mobilograms for highest peak at positions " << "(" << peak_pos.left << " - " << peak_pos.right << ")" << std::endl;
+
+       filterPeakIntensities_(mobilograms, peak_pos.left, peak_pos.right);
+
+       return peak_pos;
+    }
+
+    PeakPickerMobilogram::PeakPositions PeakPickerMobilogram::filterTopPeak_(Mobilogram& picked_mobilogram, Mobilogram& mobilogram)
+    {
+      const auto& apex_abundance_data = extractFloatValues_(picked_mobilogram.getFloatDataArrays()[IDX_ABUNDANCE]);
+      const auto& leftwidth_data = extractIntValues_(picked_mobilogram.getFloatDataArrays()[IDX_OF_LEFTBORDER_IDX]);
+      const auto& rightwidth_data = extractIntValues_(picked_mobilogram.getFloatDataArrays()[IDX_OF_RIGHTBORDER_IDX]);
+      PeakPositions peak_pos = findHighestPeak_(apex_abundance_data, leftwidth_data, rightwidth_data, mobilogram.size());
+
+      OPENMS_LOG_DEBUG << "  -- filtering mobilogram for highest peak at positions " << "(" << peak_pos.left << " - " << peak_pos.right << ")" << std::endl;
+
+      filterPeakIntensities_(mobilogram, peak_pos.left, peak_pos.right);
+
+      return peak_pos;
     }
 
     void PeakPickerMobilogram::removeOverlappingPeaks_(const Mobilogram& mobilogram, Mobilogram& picked_mobilogram)
@@ -330,4 +449,4 @@ namespace OpenMS
         gfilter_parameters.setValue("gaussian_width", gauss_width_);
         gauss_.setParameters(gfilter_parameters);
     }
-}
+    }

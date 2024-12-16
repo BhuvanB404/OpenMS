@@ -244,32 +244,4 @@ namespace OpenMS
   */
   OpenMS::Mobilogram sumAlignedMobilograms(const std::vector<OpenMS::Mobilogram>& aligned_mobilograms);
 
-  /*
-  @brief Helper function to filter peak intensities in a mobilogram
-
-  This function takes a mobilogram and filters the peak intensities based on the left and right indices provided.
-
-  @note This function modifies the input mobilogram in place.
-
-  @param[in,out] mobilogram A Mobilogram object
-  @param[in] left_index The left index of the peak range to filter
-  @param[in] right_index The right index of the peak range to filter
-  */
-
-  void filterPeakIntensities(OpenMS::Mobilogram& mobilogram, size_t left_index, size_t right_index);
-
-  /*
-  @brief Helper function to filter peak intensities for a vector of mobilograms
-
-  This function takes a vector of mobilograms and filters the peak intensities based on the left and right indices provided.
-
-  @note This function modifies the input mobilograms in place.
-
-  @param[in,out] mobilograms A vector of Mobilogram objects
-  @param[in] left_index The left index of the peak range to filter
-  @param[in] right_index The right index of the peak range to filter
-  */
-  void filterPeakIntensities(std::vector<OpenMS::Mobilogram>& mobilograms, size_t left_index, size_t right_index);
-
-
   } // namespace OpenMS

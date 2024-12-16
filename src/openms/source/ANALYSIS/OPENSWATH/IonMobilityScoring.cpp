@@ -248,48 +248,6 @@ namespace OpenMS
     return summed_mobilogram;
   }
 
-  void filterPeakIntensities(Mobilogram& mobilogram,
-                               size_t left_index,
-                               size_t right_index) 
-  {
-    // Create a temporary vector to hold the filtered peaks
-    std::vector<MobilityPeak1D> filtered_peaks;
-
-    for (size_t i = left_index; i <= right_index; ++i) {
-      const auto& peak = mobilogram[i];
-      // Collect the peaks within the range
-      filtered_peaks.push_back(peak); 
-    }
-
-    // Clear existing data and replace with filtered peaks
-    mobilogram.clear();
-    for (const auto& peak : filtered_peaks) {
-      mobilogram.push_back(peak);
-    }
-  }
-
-  void filterPeakIntensities(std::vector<Mobilogram>& mobilograms,
-                               size_t left_index,
-                               size_t right_index) 
-  {
-    for (auto& mobilogram : mobilograms) {
-      // Create a temporary vector to hold the filtered peaks
-      std::vector<MobilityPeak1D> filtered_peaks;
-
-      for (size_t i = left_index; i <= right_index; ++i) {
-        const auto& peak = mobilogram[i];
-        // Collect the peaks within the range
-        filtered_peaks.push_back(peak); 
-      }
-
-      // Clear existing data and replace with filtered peaks
-      mobilogram.clear(); 
-      for (const auto& peak : filtered_peaks) {
-        mobilogram.push_back(peak);
-      }
-    }
-  }
-
   /// Constructor
   IonMobilityScoring::IonMobilityScoring() = default;
 
@@ -555,17 +513,13 @@ namespace OpenMS
         Param picker_params = picker_.getParameters();
         picker_params.setValue("method", "corrected");
         picker_.setParameters(picker_params);
-        Mobilogram picked_mobilogram, smoothed_mobilogram;
-        picker_.pickMobilogram(summed_mobilogram, picked_mobilogram, smoothed_mobilogram);
-        peak_pos = PeakPickerMobilogram::findHighestPeak(picker_.integrated_intensities_, picker_.left_width_, picker_.right_width_, summed_mobilogram.size());
+        Mobilogram picked_mobilogram;
+
+        picker_.pickMobilogram(summed_mobilogram, picked_mobilogram);
+        picker_.filterTopPeak(picked_mobilogram, aligned_ms2_mobilograms, peak_pos);
+
         scores.im_drift_left = im_grid[peak_pos.left];
         scores.im_drift_right = im_grid[peak_pos.right];
-
-        OPENMS_LOG_DEBUG << "  -- Size of summed mobilogram " << summed_mobilogram.size() << " Size of im_grid " << im_grid.size() << std::endl;
-
-        filterPeakIntensities(aligned_ms2_mobilograms, peak_pos.left, peak_pos.right);
-
-        OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms for found highest peak at " << im_grid[peak_pos.apex] << "(" << im_grid[peak_pos.left] << " - " << im_grid[peak_pos.right] << ")" << std::endl;
       }
       else
       {
@@ -673,7 +627,7 @@ namespace OpenMS
         std::vector<double> im_grid = computeGrid_(mobilograms, eps); // ensure grid is based on all profiles!
         mobilograms.pop_back();
 
-        // Step 3: Align the IonMobilogram vectors to the grid
+        // Step 3.0: Align the IonMobilogram vectors to the grid
         std::vector< Mobilogram > aligned_mobilograms;
         for (const auto &mobilogram : mobilograms)
         {
@@ -683,34 +637,7 @@ namespace OpenMS
           aligned_mobilograms.push_back(std::move(aligned_mobilogram));
         }
 
-        PeakPickerMobilogram::PeakPositions peak_pos{};
-        if ( apply_im_peak_picking ) 
-        {
-          // Ion mobilogram cannot be empty and cannot have a single point
-          if ( !aligned_mobilograms.empty() && aligned_mobilograms[0].size()!=1 )
-          {
-            Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_mobilograms);
-
-            PeakPickerMobilogram picker_;
-            Param picker_params = picker_.getParameters();
-            picker_params.setValue("method", "corrected");
-            picker_.setParameters(picker_params);
-            Mobilogram picked_mobilogram, smoothed_mobilogram;
-            picker_.pickMobilogram(summed_mobilogram, picked_mobilogram, smoothed_mobilogram);
-            peak_pos = PeakPickerMobilogram::findHighestPeak(picker_.integrated_intensities_, picker_.left_width_, picker_.right_width_, summed_mobilogram.size());
-            scores.im_drift_left = im_grid[peak_pos.left];
-            scores.im_drift_right = im_grid[peak_pos.right];
-            filterPeakIntensities(aligned_mobilograms, peak_pos.left, peak_pos.right);
-
-            OPENMS_LOG_DEBUG << "  -- IM peak picking for summed mobilograms found highest peak at " << im_grid[peak_pos.apex] << "(" << im_grid[peak_pos.left] << " - " << im_grid[peak_pos.right] << ")" << std::endl;
-          }
-          else
-          {
-            scores.im_drift_left = -1;
-            scores.im_drift_right = -1;
-          }
-        }
-
+        // Step 3.1: Align the Identification IonMobilogram vectors to the same grid as the detection transitions
         Mobilogram aligned_identification_mobilogram;
         Size max_peak_idx = 0;
         alignToGrid_(identification_mobilogram,
@@ -719,12 +646,35 @@ namespace OpenMS
                     eps,
                     max_peak_idx);
 
-        if ( apply_im_peak_picking )
+        if ( apply_im_peak_picking ) 
         {
+          PeakPickerMobilogram::PeakPositions peak_pos{};
+          PeakPickerMobilogram picker_;
+          Param picker_params = picker_.getParameters();
+          picker_params.setValue("method", "corrected");
+          picker_.setParameters(picker_params);
+          Mobilogram picked_mobilogram;
           // Ion mobilogram cannot be empty and cannot have a single point
+          if ( !aligned_mobilograms.empty() && aligned_mobilograms[0].size()!=1 )
+          {
+            Mobilogram summed_mobilogram = sumAlignedMobilograms(aligned_mobilograms);
+
+            picker_.pickMobilogram(summed_mobilogram, picked_mobilogram);
+            picker_.filterTopPeak(picked_mobilogram, aligned_mobilograms, peak_pos);
+
+            scores.im_drift_left = im_grid[peak_pos.left];
+            scores.im_drift_right = im_grid[peak_pos.right];
+          }
+          else
+          {
+            scores.im_drift_left = -1;
+            scores.im_drift_right = -1;
+          }
+
+          // Identification ion mobilogram cannot be empty and cannot have a single point
           if ( !aligned_identification_mobilogram.empty() && aligned_identification_mobilogram.size()!=1 )
           {
-            filterPeakIntensities(aligned_identification_mobilogram, peak_pos.left, peak_pos.right);
+            picker_.filterTopPeak(picked_mobilogram, aligned_identification_mobilogram, peak_pos);
           }
         }
 
