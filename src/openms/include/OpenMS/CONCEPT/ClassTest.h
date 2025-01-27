@@ -19,11 +19,14 @@
 #include <OpenMS/OpenMSConfig.h>
 #include <OpenMS/config.h>
 
+#include <xercesc/util/XMLString.hpp>
 #include <cstring>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <type_traits>
+
+using XMLCh = char16_t;
 // Empty declaration to avoid problems in case the namespace is not
 // yet defined (e.g. TEST/ClassTest_test.cpp)
 
@@ -283,12 +286,19 @@ namespace OpenMS
           {
             stdcout << ' ' << (this_test ? '+' : '-') << "  line " << line << " : TEST_EQUAL(" << expression_1_stringified << ','
                     << expression_2_stringified << "): got '";
-            if constexpr (std::is_enum_v<T1> && std::is_enum_v<T2>)
+
+            // we can't print wide chars directly using operator<< so we need to test for it
+            if constexpr (std::is_same_v<std::remove_cv_t<T1>, XMLCh*> || std::is_same_v<std::remove_cv_t<T2>, XMLCh*>)
+            {
+              stdcout << (expression_1 == nullptr ? "(null)" : "(XMLCh*)") << "', expected '"
+                      << (expression_2 == nullptr ? "(null)" : "(XMLCh*)") << "'\n";
+            }
+            else if constexpr (std::is_enum_v<T1> && std::is_enum_v<T2>)
             {
               stdcout << static_cast<int>(expression_1) << "', expected '" << static_cast<int>(expression_2) << "'\n";
             }
             else
-            { 
+            {
               stdcout << expression_1 << "', expected '" << expression_2 << "'\n";
             }
           }
