@@ -12,7 +12,6 @@
 
 ///////////////////////////
 
-#include <OpenMS/METADATA/Tagging.h>
 #include <sstream>
 
 /////////////////////////////////////////////////////////////
@@ -169,9 +168,6 @@ START_SECTION((bool operator== (const SampleTreatment& rhs) const))
 	TEST_EQUAL(edit==empty, false);
 	edit = empty;
 	TEST_TRUE(edit == empty);
-
-	Tagging t;
-	TEST_EQUAL(t==empty, false);
 END_SECTION
 
 /////////////////////////////////////////////////////////////

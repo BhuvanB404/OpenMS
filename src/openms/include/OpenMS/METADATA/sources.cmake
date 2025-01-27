@@ -45,7 +45,6 @@ SourceFile.h
 SpectrumLookup.h
 SpectrumMetaDataLookup.h
 SpectrumSettings.h
-Tagging.h
 )
 
 ### add path to the filenames

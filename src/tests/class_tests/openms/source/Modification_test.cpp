@@ -12,7 +12,6 @@
 ///////////////////////////
 
 #include <OpenMS/METADATA/Modification.h>
-#include <OpenMS/METADATA/Tagging.h>
 #include <sstream>
 
 ///////////////////////////
@@ -185,10 +184,7 @@ START_SECTION((virtual bool operator==(const SampleTreatment &rhs) const ))
 	edit.setMetaValue("color",String("red"));
 	TEST_EQUAL(edit==empty, false);
 	edit = empty;
-	TEST_TRUE(edit == empty);	
-	
-	Tagging m;
-	TEST_EQUAL(m==empty, false);
+	TEST_TRUE(edit == empty);
 END_SECTION
 
 /////////////////////////////////////////////////////////////

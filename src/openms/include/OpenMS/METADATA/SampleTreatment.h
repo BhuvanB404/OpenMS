@@ -14,7 +14,7 @@
 namespace OpenMS
 {
   /**
-      @brief Base class for sample treatments (Digestion, Modification, Tagging, ...)
+      @brief Base class for sample treatments (Digestion, Modification, ...)
 
       Virtual base class for all sample treatments.
 

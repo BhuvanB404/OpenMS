@@ -13,7 +13,6 @@
 #include <OpenMS/VISUAL/VISUALIZER/BaseVisualizerGUI.h>
 #include <OpenMS/VISUAL/VISUALIZER/DigestionVisualizer.h>
 #include <OpenMS/VISUAL/VISUALIZER/ModificationVisualizer.h>
-#include <OpenMS/VISUAL/VISUALIZER/TaggingVisualizer.h>
 #include <OpenMS/VISUAL/VISUALIZER/HPLCVisualizer.h>
 #include <OpenMS/VISUAL/VISUALIZER/GradientVisualizer.h>
 #include <OpenMS/VISUAL/VISUALIZER/MetaInfoVisualizer.h>
@@ -815,10 +814,6 @@ namespace OpenMS
           visualize_((const_cast<Modification &>(dynamic_cast<const Modification &>(meta.getTreatment(i)))), item);
 
         }
-        else if (meta.getTreatment(i).getType() == "Tagging")
-        {
-          visualize_((const_cast<Tagging &>(dynamic_cast<const Tagging &>(meta.getTreatment(i)))), item);
-        }
       }
     }
 
@@ -922,26 +917,6 @@ namespace OpenMS
     //check for PeptideIdentification
     visualizeAll_(meta.getPeptideIdentifications(), item);
 
-    connectVisualizer_(visualizer);
-  }
-
-  //Visualizing tagging object
-  void MetaDataBrowser::visualize_(Tagging & meta, QTreeWidgetItem * parent)
-  {
-    TaggingVisualizer * visualizer = new TaggingVisualizer(isEditable(), this);
-    visualizer->load(meta);
-
-    QStringList labels;
-    labels << "Tagging" << QString::number(ws_->addWidget(visualizer));
-
-    if (parent == nullptr)
-    {
-      new QTreeWidgetItem(treeview_, labels);
-    }
-    else
-    {
-      new QTreeWidgetItem(parent, labels);
-    }
     connectVisualizer_(visualizer);
   }
 

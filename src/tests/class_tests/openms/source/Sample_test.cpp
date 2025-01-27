@@ -14,7 +14,6 @@
 #include <OpenMS/METADATA/Sample.h>
 #include <OpenMS/METADATA/Digestion.h>
 #include <OpenMS/METADATA/Modification.h>
-#include <OpenMS/METADATA/Tagging.h>
 #include <sstream>
 
 ///////////////////////////
@@ -174,24 +173,19 @@ END_SECTION
 START_SECTION((void addTreatment(const SampleTreatment& treatment, Int before_position=-1)))
 	Sample s;
 	Digestion d;
-	Modification m,m2,m3;
-	Tagging t;
+	Modification m;
 
 	//different treatments
 	d.setEnzyme("D");
 	m.setReagentName("m");
-	t.setMassShift(5.0);
 	s.addTreatment(d);
 	s.addTreatment(m);
-	s.addTreatment(t);
-	TEST_EQUAL(s.countTreatments(),3)
+	TEST_EQUAL(s.countTreatments(),2)
 	TEST_EQUAL(s.getTreatment(0).getType(),"Digestion")
 	TEST_EQUAL(s.getTreatment(1).getType(),"Modification")
-	TEST_EQUAL(s.getTreatment(2).getType(),"Tagging")
 
 	TEST_EQUAL((dynamic_cast<const Digestion&>(s.getTreatment(0))).getEnzyme(),"D")
 	TEST_EQUAL((dynamic_cast<const Modification&>(s.getTreatment(1))).getReagentName(),"m")
-	TEST_REAL_SIMILAR((dynamic_cast<const Tagging&>(s.getTreatment(2))).getMassShift(),5.0)
 END_SECTION
 
 START_SECTION((SampleTreatment& getTreatment(UInt position)))
@@ -206,29 +200,18 @@ START_SECTION((void removeTreatment(UInt position)))
 	Sample s;
 	Digestion d;
 	Modification m,m2,m3;
-	Tagging t;
 
 	//different treatments
 	d.setEnzyme("D");
 	m.setReagentName("m");
-	t.setMassShift(5.0);
 	s.addTreatment(d);
 	s.addTreatment(m);
-	s.addTreatment(t);
 
 	//removeTreatment
 	m2.setReagentName("m2");
 	m3.setReagentName("m3");
 	s.addTreatment(m2,0);
-	s.addTreatment(m3,3);
-	TEST_EQUAL(s.countTreatments(),5)
-	TEST_EQUAL((dynamic_cast<const Modification&>(s.getTreatment(0))).getReagentName(),"m2")
-	TEST_EQUAL((dynamic_cast<const Digestion&>(s.getTreatment(1))).getEnzyme(),"D")
-	TEST_EQUAL((dynamic_cast<const Modification&>(s.getTreatment(2))).getReagentName(),"m")
-	TEST_EQUAL((dynamic_cast<const Modification&>(s.getTreatment(3))).getReagentName(),"m3")
-	TEST_REAL_SIMILAR((dynamic_cast<const Tagging&>(s.getTreatment(4))).getMassShift(),5.0)
-
-	s.removeTreatment(4);
+	s.addTreatment(m3,2);
 	TEST_EQUAL(s.countTreatments(),4)
 	TEST_EQUAL((dynamic_cast<const Modification&>(s.getTreatment(0))).getReagentName(),"m2")
 	TEST_EQUAL((dynamic_cast<const Digestion&>(s.getTreatment(1))).getEnzyme(),"D")

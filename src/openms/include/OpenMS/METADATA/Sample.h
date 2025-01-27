@@ -24,7 +24,7 @@ namespace OpenMS
       It contains basic descriptions like name, number (i.e. order number), mass,
       volume, concentration, state and a comment.
 
-      Additionally sample treatments like Digestion, Modification or Tagging can be added.
+      Additionally sample treatments like Digestion or Modification can be added.
 
       A Sample can be composed of other samples.
 

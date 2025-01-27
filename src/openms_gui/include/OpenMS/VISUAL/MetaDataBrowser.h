@@ -56,7 +56,6 @@ namespace OpenMS
   class Software;
   class SourceFile;
   class SpectrumSettings;
-  class Tagging;
   class DocumentIdentifier;
   class Product;
 
@@ -189,7 +188,6 @@ protected:
     void visualize_(HPLC & meta, QTreeWidgetItem * parent = nullptr);
     void visualize_(Digestion & meta, QTreeWidgetItem * parent = nullptr);
     void visualize_(Modification & meta, QTreeWidgetItem * parent = nullptr);
-    void visualize_(Tagging & meta, QTreeWidgetItem * parent = nullptr);
     void visualize_(Gradient & meta, QTreeWidgetItem * parent = nullptr);
     void visualize_(Software & meta, QTreeWidgetItem * parent = nullptr);
     void visualize_(ScanWindow & meta, QTreeWidgetItem * parent = nullptr);

@@ -57,7 +57,7 @@ public:
         @brief Equality operator
 
     Although this operator takes a reference to a SampleTreatment as argument
-    it tests for the equality of Tagging instances!
+    it tests for the equality of Modification instances!
   */
     bool operator==(const SampleTreatment & rhs) const override;
 

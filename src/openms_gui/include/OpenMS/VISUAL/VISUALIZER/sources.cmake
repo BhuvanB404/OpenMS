@@ -32,7 +32,6 @@ ScanWindowVisualizer.h
 SoftwareVisualizer.h
 SourceFileVisualizer.h
 SpectrumSettingsVisualizer.h
-TaggingVisualizer.h
 ProductVisualizer.h
 )
 

@@ -32,7 +32,6 @@ ScanWindowVisualizer.cpp
 SoftwareVisualizer.cpp
 SourceFileVisualizer.cpp
 SpectrumSettingsVisualizer.cpp
-TaggingVisualizer.cpp
 ProductVisualizer.cpp
 )
 
