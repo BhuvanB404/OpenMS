@@ -75,17 +75,6 @@ endif()
 ####  more flags...
 ####
 
-# Set C++20 as the standard for all compilers
-if (MSVC)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  add_compile_options(/std:c++20)
-elseif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
-endif()
-
 if (CMAKE_COMPILER_IS_GNUCXX)
 
   add_compile_options(-Wall -Wextra
