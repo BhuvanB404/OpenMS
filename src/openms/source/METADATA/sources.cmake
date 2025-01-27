@@ -13,7 +13,6 @@ ChromatogramSettings.cpp
 ContactPerson.cpp
 DataArrays.cpp
 DataProcessing.cpp
-Digestion.cpp
 DocumentIdentifier.cpp
 ExperimentalDesign.cpp
 ExperimentalSettings.cpp
@@ -28,7 +27,6 @@ MetaInfo.cpp
 MetaInfoDescription.cpp
 MetaInfoInterface.cpp
 MetaInfoRegistry.cpp
-Modification.cpp
 PeptideEvidence.cpp
 PeptideHit.cpp
 PeptideIdentification.cpp
@@ -37,7 +35,6 @@ Product.cpp
 ProteinHit.cpp
 ProteinIdentification.cpp
 Sample.cpp
-SampleTreatment.cpp
 ScanWindow.cpp
 Software.cpp
 SourceFile.cpp
