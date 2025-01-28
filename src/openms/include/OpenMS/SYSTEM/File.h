@@ -28,8 +28,6 @@ namespace OpenMS
   {
 public:
 
-    friend class TOPPBase;
-
     /**
       @brief Class representing a temporary directory
     
