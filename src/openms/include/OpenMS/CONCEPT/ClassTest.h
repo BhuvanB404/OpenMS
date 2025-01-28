@@ -19,14 +19,14 @@
 #include <OpenMS/OpenMSConfig.h>
 #include <OpenMS/config.h>
 
-#include <xercesc/util/XMLString.hpp>
 #include <cstring>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <type_traits>
 
-using XMLCh = char16_t;
+using XMLCh = char16_t; // Xerces-C++ uses char16_t for UTF-16 strings that we need to output in tests
+
 // Empty declaration to avoid problems in case the namespace is not
 // yet defined (e.g. TEST/ClassTest_test.cpp)
 
