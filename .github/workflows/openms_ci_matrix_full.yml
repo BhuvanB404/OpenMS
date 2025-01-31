@@ -492,7 +492,7 @@ jobs:
             --exclude='OpenMS/THIRDPARTY/**' \
             --exclude='.git/**' \
             --exclude='.github/**' \
-            --exclude='vcpkg*/**' \         
+            --exclude='vcpkg*/**' \
             -czf OpenMS-${{ steps.create_changelog.outputs.version_number }}.tar.gz -C ${{ github.workspace }} OpenMS
         
    # Upload the source tar
