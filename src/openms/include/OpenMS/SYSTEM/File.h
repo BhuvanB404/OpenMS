@@ -27,12 +27,10 @@ namespace OpenMS
   class OPENMS_DLLAPI File
   {
 public:
-
     /**
       @brief Class representing a temporary directory
     
     */
-
     class OPENMS_DLLAPI TempDir
     {
     public:
