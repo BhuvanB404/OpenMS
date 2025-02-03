@@ -159,7 +159,7 @@ function(openms_add_library)
   #TODO cxx_std_17 only requires a c++17 flag for the compiler. Not full standard support.
   # If we want full support, we need our own try_compiles (e.g. for structured bindings first available in GCC7)
   # or specify a min version of each compiler.
-  target_compile_features(${openms_add_library_TARGET_NAME} PUBLIC cxx_std_17)
+  target_compile_features(${openms_add_library_TARGET_NAME} PUBLIC cxx_std_20)
 
   if (CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${openms_add_library_TARGET_NAME} PRIVATE 
