@@ -1,0 +1,115 @@
+# OpenMS Architecture Documentation
+
+## Introduction
+
+OpenMS is an open‐source software framework dedicated to mass spectrometry data analysis in proteomics, metabolomics, and related fields. It provides a robust, flexible, and extensible platform that supports rapid algorithm development, data processing, and the creation of custom analysis pipelines. This document outlines the core architectural components, design principles, and future directions of the OpenMS project.
+
+## Architecture Principles
+
+- **Modularity & Extensibility:** Built as a collection of loosely coupled libraries and tools, OpenMS allows developers to easily integrate new algorithms and extend existing functionality.
+- **Performance & Scalability:** Written in modern C++ and optimized for parallel processing, OpenMS is designed to handle large datasets efficiently.
+- **Portability:** OpenMS runs natively on Windows, Linux, and macOS.
+- **Robustness & Reliability:** Extensive error handling, automated unit and integration tests, and continuous integration (e.g., via CDASH) ensure high-quality, reproducible analyses.
+- **User-Centric Design:** With a suite of command-line tools (TOPP), graphical interfaces (TOPPView, TOPPAS), and Python bindings (pyOpenMS), OpenMS caters to both developers and end users.
+
+## Core Components
+
+### 1. OpenMS Library
+- **Kernel Classes**: Essential data structures for representing mass spectrometry data
+  - `Peak`: Basic data structure for mass-to-charge ratio (m/z) and intensity pairs
+  - `MSSpectrum`: Represents a single mass spectrum
+  - `MSExperiment`: Container for multiple spectra and chromatograms
+  - `ChromatogramPeak`: Data structure for retention time and intensity pairs
+  - ...
+
+- **Algorithms:**  
+  Implements key algorithms for signal processing, feature detection, quantification, peptide identification, protein inference, alignment, and others.
+- **File Handling & Format Support:**  
+  Robust support for standard MS file formats (mzML, mzXML, mgf, ...) including conversion utilities and compressed data handling.
+
+### 2. TOPP (The OpenMS Proteomics Pipeline)
+- **Tool Collection:**  
+  A comprehensive suite of command-line tools—each focused on specific tasks such as data conversion, peak picking, feature finding, and alignment. These tools share a standardized interface for parameter handling, logging, and error reporting.
+- **Workflow Integration:**  
+  TOPP tools are designed to be chained together, forming the backbone of custom analysis pipelines. They can also be integrated into workflow systems like KNIME or Galaxy.
+
+### 3. User Interfaces
+- **Graphical Tools:**  
+  - **TOPPView:** A dedicated viewer for raw spectra, chromatograms, and identification results.
+
+### 4. Scripting  
+- **Scripting & API:**  
+  - **pyOpenMS:** Python bindings that expose core functionalities, enabling rapid prototyping and custom tool development.  
+
+### 2. TOPP (The OpenMS Pipeline)
+
+TOPP consists of standardized tools built on top of the OpenMS library that can be easily integrated into workflow systems:
+
+- **Tool Architecture**:
+  - Common interface for all tools
+  - Parameter handling system
+  - Logging and error reporting
+  - Progress monitoring
+  - Input/output file handling
+
+### 3. User Interfaces
+
+#### TOPPView
+
+- Raw data visualization
+- Spectrum and chromatogram viewing
+- 2D/3D data representation
+- Identification result visualization
+- Interactive data analysis
+
+## Extension Points
+
+- **Algorithm Integration:**  
+  Well-defined interfaces enable the addition of new data processing and analysis algorithms.
+- **Tool Development:**  
+  Developers can build new TOPP tools by subclassing common base classes and integrating with the standardized parameter and logging systems.
+- **File Format Support:**  
+  File handlers and extension hooks allow support for additional file formats and external code integration.
+- **Workflow Customization:**  
+  Users can combine OpenMS tools with custom scripts (e.g., via pyOpenMS).
+
+## Build System
+
+- **CMake Configuration:**  
+  OpenMS uses a CMake-based build system that ensures platform-independent compilation and simplifies dependency management.
+- **Automated Testing & CI:**  
+  A comprehensive suite of unit tests, integration tests, and nightly builds (e.g., on CDASH) maintain code quality and facilitate rapid detection of issues.
+
+## Parallel Processing
+
+1. Using OpenMP as parallelization backend
+
+## Documentation Standards
+
+- **Code Documentation:**  
+  Doxygen-generated API documentation, inline comments, and consistent coding standards ensure clarity and maintainability.
+- **User Documentation:**  
+  User guides, tutorials, and example workflows.
+- **Developer Guidelines:**  
+  Clear contribution guidelines and coding conventions are provided to ensure consistency and quality across the codebase.
+
+## Testing Strategy
+
+- **Unit Testing:**  
+  A comprehensive suite of unit tests covers the majority of core functionalities.
+- **Integration Testing:**  
+  Tests ensure that individual tools work together seamlessly and that workflows produce consistent results.
+
+## Maintenance Guidelines
+
+- **Code Reviews:**  
+  All contributions undergo peer review to maintain quality and adherence to coding standards.
+- **Release Management:**  
+  Flexible release cycles with defined versioning protocols
+- **Issue Tracking:**  
+  Community-reported issues and feature requests are managed via GitHub issues
+
+
+## Contributing
+
+For detailed information about contributing to OpenMS, please refer to the CONTRIBUTING.md file in the repository.
