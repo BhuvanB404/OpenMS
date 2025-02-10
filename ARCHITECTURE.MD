@@ -57,7 +57,7 @@ TOPP consists of comprehensive suite of command-line tools built on top of the O
 - **Scripting & API:**  
   - **pyOpenMS:** Python bindings that expose core functionalities, enabling rapid prototyping and custom tool development.  
 
-# Data flowchart
+## Data flowchart
 
 ```mermaid	
 flowchart TD
