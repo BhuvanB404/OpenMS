@@ -16,14 +16,20 @@ OpenMS is an open‐source software framework dedicated to mass spectrometry dat
 
 ### 1. OpenMS Library
 - **Kernel Classes**: Essential data structures for representing mass spectrometry data
-  - `Peak`: Basic data structure for mass-to-charge ratio (m/z) and intensity pairs
+  - `Peak1D`: Basic data structure for mass-to-charge ratio (m/z) and intensity pairs
+  - `ChromatogramPeak`: Data structure for retention time and intensity pairs
   - `MSSpectrum`: Represents a single mass spectrum
   - `MSExperiment`: Container for multiple spectra and chromatograms
-  - `ChromatogramPeak`: Data structure for retention time and intensity pairs
+  - `Feature`: Represents a feature in a mass spectrum
+  - `FeatureMap`: Container for features detected in a sample
+  - `ConsensusMap`: Container for features identified across multiple samples or conditions
+  - `PeptideIdentification`: Container for peptide identification results
+  - `ProteinIdentification`: Container for protein identification results
   - ...
 
 - **Algorithms:**  
   Implements key algorithms for signal processing, feature detection, quantification, peptide identification, protein inference, alignment, and others.
+  
 - **File Handling & Format Support:**  
   Robust support for standard MS file formats (mzML, mzXML, mgf, ...) including conversion utilities and compressed data handling.
 
