@@ -82,7 +82,7 @@ TOPP consists of standardized tools built on top of the OpenMS library that can 
 
 ## Parallel Processing
 
-1. Using OpenMP as parallelization backend
+1. OpenMP as parallelization backend
 
 ## Documentation Standards
 
@@ -99,6 +99,21 @@ TOPP consists of standardized tools built on top of the OpenMS library that can 
   A comprehensive suite of unit tests covers the majority of core functionalities.
 - **Integration Testing:**  
   Tests ensure that individual tools work together seamlessly and that workflows produce consistent results.
+
+## Deployment and Distribution
+
+OpenMS and its Python bindings (pyOpenMS) are distributed through several channels to suit different use cases and environments:
+
+- **Standalone Installers:**  
+  - For Windows and macOS, standalone installers (e.g., drag-and-drop installers for macOS) are provided for releases.
+
+- **Bioconda:**  
+  - OpenMS (and its library component `libopenms`) as well as its tools are available via the Bioconda channel.
+  - The Python bindings, **pyOpenMS**, are available on Bioconda or pypi.
+
+- **Container Images:**  
+  - Docker and Singularity container images are provided through the OpenMS GitHub Container Registry as well as via BioContainers. These images bundle the OpenMS library, executables, and pyOpenMS so that users can deploy OpenMS in cloud or HPC environments with minimal setup.  
+
 
 ## Maintenance Guidelines
 
