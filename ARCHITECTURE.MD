@@ -59,12 +59,13 @@ TOPP consists of comprehensive suite of command-line tools built on top of the O
 
 # Data flowchart
 
+```mermaid	
 flowchart TD
     A[Raw Data] --> B[Open file format]
     B --> C[Analysis Pipeline (e.g., set of TOPP Tools, pyOpenMS Scripts)]
     C --> D[Export]
     D --> E[Visualization and Downstream Processing]
-
+```
 
 ## Extension Points
 
