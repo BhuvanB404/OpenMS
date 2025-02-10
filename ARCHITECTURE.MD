@@ -12,7 +12,7 @@ OpenMS is an open‐source software framework dedicated to mass spectrometry dat
 - **Robustness & Reliability:** Extensive error handling, automated unit and integration tests, and continuous integration (e.g., via CDASH) ensure high-quality, reproducible analyses.
 - **User-Centric Design:** With a suite of command-line tools (TOPP), graphical interfaces (TOPPView, TOPPAS), and Python bindings (pyOpenMS), OpenMS caters to both developers and end users.
 
-## Core Components
+## Components
 
 ### 1. OpenMS Library
 - **Kernel Classes**: Essential data structures for representing mass spectrometry data
@@ -27,23 +27,9 @@ OpenMS is an open‐source software framework dedicated to mass spectrometry dat
 - **File Handling & Format Support:**  
   Robust support for standard MS file formats (mzML, mzXML, mgf, ...) including conversion utilities and compressed data handling.
 
-### 2. TOPP (The OpenMS Proteomics Pipeline)
-- **Tool Collection:**  
-  A comprehensive suite of command-line tools—each focused on specific tasks such as data conversion, peak picking, feature finding, and alignment. These tools share a standardized interface for parameter handling, logging, and error reporting.
-- **Workflow Integration:**  
-  TOPP tools are designed to be chained together, forming the backbone of custom analysis pipelines. They can also be integrated into workflow systems like KNIME or Galaxy.
+### 2. TOPP Tools (The OpenMS Pipeline Tools)
 
-### 3. User Interfaces
-- **Graphical Tools:**  
-  - **TOPPView:** A dedicated viewer for raw spectra, chromatograms, and identification results.
-
-### 4. Scripting  
-- **Scripting & API:**  
-  - **pyOpenMS:** Python bindings that expose core functionalities, enabling rapid prototyping and custom tool development.  
-
-### 2. TOPP (The OpenMS Pipeline)
-
-TOPP consists of standardized tools built on top of the OpenMS library that can be easily integrated into workflow systems:
+TOPP consists of comprehensive suite of command-line tools built on top of the OpenMS library that can be easily integrated into workflow systems.
 
 - **Tool Architecture**:
   - Common interface for all tools
@@ -53,23 +39,27 @@ TOPP consists of standardized tools built on top of the OpenMS library that can 
   - Input/output file handling
 
 ### 3. User Interfaces
+- **Graphical Tools:**  
+  - **TOPPView:** A dedicated viewer for raw spectra, chromatograms, and identification results.
+  - Raw data visualization
+  - Spectrum and chromatogram viewing
+  - 2D/3D data representation 
+  - Identification result visualization
+  - Interactive data analysis
 
-#### TOPPView
+### 4. Scripting  
+- **Scripting & API:**  
+  - **pyOpenMS:** Python bindings that expose core functionalities, enabling rapid prototyping and custom tool development.  
 
-- Raw data visualization
-- Spectrum and chromatogram viewing
-- 2D/3D data representation
-- Identification result visualization
-- Interactive data analysis
 
 ## Extension Points
 
 - **Algorithm Integration:**  
   Well-defined interfaces enable the addition of new data processing and analysis algorithms.
-- **Tool Development:**  
-  Developers can build new TOPP tools by subclassing common base classes and integrating with the standardized parameter and logging systems.
 - **File Format Support:**  
   File handlers and extension hooks allow support for additional file formats and external code integration.
+- **Tool Development:**  
+  Developers can build new TOPP tools by subclassing common base classes and integrating with the standardized parameter and logging systems.
 - **Workflow Customization:**  
   Users can combine OpenMS tools with custom scripts (e.g., via pyOpenMS).
 
@@ -82,7 +72,7 @@ TOPP consists of standardized tools built on top of the OpenMS library that can 
 
 ## Parallel Processing
 
-1. OpenMP as parallelization backend
+1. OpenMS uses OpenMP as parallelization backend
 
 ## Documentation Standards
 
