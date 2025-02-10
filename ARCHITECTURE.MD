@@ -20,7 +20,7 @@ OpenMS is an open‐source software framework dedicated to mass spectrometry dat
   - `ChromatogramPeak`: Data structure for retention time and intensity pairs
   - `MSSpectrum`: Represents a single mass spectrum
   - `MSExperiment`: Container for multiple spectra and chromatograms
-  - `Feature`: Represents a feature in a mass spectrum
+  - `Feature`: Represents a detected feature in a mass spectrum, characterized by properties like m/z, retention time, and intensity.
   - `FeatureMap`: Container for features detected in a sample
   - `ConsensusMap`: Container for features identified across multiple samples or conditions
   - `PeptideIdentification`: Container for peptide identification results
@@ -31,18 +31,19 @@ OpenMS is an open‐source software framework dedicated to mass spectrometry dat
   Implements key algorithms for signal processing, feature detection, quantification, peptide identification, protein inference, alignment, and others.
   
 - **File Handling & Format Support:**  
-  Robust support for standard MS file formats (mzML, mzXML, mgf, ...) including conversion utilities and compressed data handling.
+  - Robust support for standard MS file formats (mzML, mzXML, mgf, mzIdentML, TraML, ...).
+  - Utilities for file conversion and handling compressed data are also provided.
 
 ### 2. TOPP Tools (The OpenMS Pipeline Tools)
 
 TOPP consists of comprehensive suite of command-line tools built on top of the OpenMS library that can be easily integrated into workflow systems.
 
 - **Tool Architecture**:
-  - Common interface for all tools
-  - Parameter handling system
-  - Logging and error reporting
-  - Progress monitoring
-  - Input/output file handling
+  - Common interface for all tools, ensuring consistency.
+  - Standardized parameter handling system for configuring tool behavior.
+  - Logging and error reporting mechanisms for debugging and monitoring.
+  - Progress monitoring to provide feedback during long-running processes.
+  - Input/output file handling to manage data flow between tools.
 
 ### 3. User Interfaces
 - **Graphical Tools:**  
@@ -54,8 +55,12 @@ TOPP consists of comprehensive suite of command-line tools built on top of the O
   - Interactive data analysis
 
 ### 4. Scripting  
-- **Scripting & API:**  
-  - **pyOpenMS:** Python bindings that expose core functionalities, enabling rapid prototyping and custom tool development.  
+- **Scripting & API: pyOpenMS** 
+  - Python bindings that expose core functionalities
+  - Rapid prototyping of algorithms in Python.
+  -Integration with other scientific Python libraries (e.g., NumPy, SciPy).
+  - Development of custom data processing workflows.
+  - Interactive data analysis and visualization in Jupyter notebooks.
 
 ## Data flowchart
 
