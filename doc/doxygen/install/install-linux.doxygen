@@ -81,7 +81,7 @@
     sudo yum install epel-release
     # Update repo list for the thirdparty repository EPEL
     sudo yum repolist
-    # Get REQUIRED installable contrib libraries
+    # Get REQUIRED installable contrib libraries (QtSVG might also be available using 'qt6-svg-dev')
     sudo yum install cmake3 qt6-qtbase-gui qt6-qtbase-devel qt6-qtsvg-devel python-devel
     # Get OPTIONAL installable contrib libraries preferably from our Contrib package in the next step.
     ## sudo yum install boost-devel libsvm-devel libzip-devel zlib-devel xerces-c-devel bzip2-devel libhdf5-devel glpk-devel
