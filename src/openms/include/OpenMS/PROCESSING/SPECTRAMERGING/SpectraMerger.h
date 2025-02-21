@@ -342,7 +342,7 @@ public:
      *
      * @param exp experimental data to be averaged
      * @param average_type averaging type to be used ("gaussian" or "tophat")
-     * @param ms_level target MS level. If it is -1, ms_level will be determined by the '<average_type>:ms_level' parameter of the DefaultParamHandler
+     * @param ms_level target MS level. If it is -1, ms_level will be determined by the '&lt;average_type&gt;ms_level' parameter of the DefaultParamHandler
      */
     template <typename MapType>
     void average(MapType& exp, const String& average_type, int ms_level = -1)
