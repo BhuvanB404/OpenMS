@@ -14,6 +14,10 @@ PR - Pull Request (on GitHub), i.e. integration of a new feature or bugfix
 ----                                OpenMS 3.4.0     (under development)              ----
 ------------------------------------------------------------------------------------------
 
+General:
+- OpenMS now expects a compiler that supports C++20
+- OpenMSInfo now informs about custom CXX compile flags (#7846)
+ 
 OpenSwath:
 - Changes to -out_features (# 7793)
 	- Deprecate .tsv feature output
@@ -29,8 +33,11 @@ Misc:
 Library:
 - IDScoreSwitcherAlgorithm: Added switchToScoreType and switchBackScoreType methods for score switching and reversion. (#7769)
 
+- removed tools:
+  - XTandemAdapter
+
 ------------------------------------------------------------------------------------------
-----                                OpenMS 3.3.0     (under development)              ----
+----                                OpenMS 3.3.0                                      ----
 ------------------------------------------------------------------------------------------
 
 What's new:
