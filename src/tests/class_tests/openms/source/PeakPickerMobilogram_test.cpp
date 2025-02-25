@@ -35,7 +35,7 @@ RichPeakMobilogram get_mobilogram(int i)
     MobilityPeak1D peak;
     if (i == 0)
     {
-      peak.setMZ(im_data1[k]);
+      peak.setPos(im_data1[k]);
       peak.setIntensity(int_data1[k]);
     }
     mobilogram.push_back(peak);
@@ -77,7 +77,7 @@ START_SECTION(void pickMobilogram(const RichPeakMobilogram& mobilogram, RichPeak
   picker.pickMobilogram(mobilogram, picked_mobilogram, smoothed_mobilogram);
 
   TEST_REAL_SIMILAR(picked_mobilogram[0].getIntensity(), 58956.1);
-  TEST_REAL_SIMILAR(picked_mobilogram[0].getMZ(), 0.978364);
+  TEST_REAL_SIMILAR(picked_mobilogram[0].getPos(), 0.978364);
   TEST_REAL_SIMILAR(picked_mobilogram.getFloatDataArrays()[PeakPickerMobilogram::IDX_ABUNDANCE][0], 884145); // IntegratedIntensity
   TEST_REAL_SIMILAR(picked_mobilogram.getFloatDataArrays()[PeakPickerMobilogram::IDX_LEFTBORDER][0], 0.948675); // leftWidth
   TEST_REAL_SIMILAR(picked_mobilogram.getFloatDataArrays()[PeakPickerMobilogram::IDX_RIGHTBORDER][0], 0.997081); // rightWidth
