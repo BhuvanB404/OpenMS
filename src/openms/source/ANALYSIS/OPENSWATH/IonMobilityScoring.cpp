@@ -215,15 +215,13 @@ namespace OpenMS
   {
     if (aligned_mobilograms.empty()) return {};
 
-    const size_t reference_size = aligned_mobilograms[0].size();
-
     OPENMS_PRECONDITION(
-        std::all_of(aligned_mobilograms.begin() + 1, aligned_mobilograms.end(),
-                    [reference_size](const Mobilogram& mobilogram) {
-                        return mobilogram.size() == reference_size;
-                    }),
-        "All Mobilograms in aligned_mobilograms must have the same size."
-    );
+      std::all_of(aligned_mobilograms.begin() + 1, aligned_mobilograms.end(),
+                  [reference_size = aligned_mobilograms[0].size()](const Mobilogram& mobilogram) {
+                      return mobilogram.size() == reference_size;
+                  }),
+      "All Mobilograms in aligned_mobilograms must have the same size."
+  );
 
     Mobilogram summed_mobilogram;
 
