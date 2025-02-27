@@ -52,10 +52,18 @@ namespace OpenMS
       RESAMPLE
     };
 
+    enum class SpectrumMergeMethodType 
+    { 
+      FIXED, 
+      DYNAMIC 
+    };
+
     double rt_normalization_factor_;
     double spacing_for_spectra_resampling_;
+    double merge_spectra_by_peak_width_fraction_;
     int add_up_spectra_;
     SpectrumAdditionMethod spectra_addition_method_;
+    SpectrumMergeMethodType spectra_merge_method_type_;
     double im_drift_extra_pcnt_;
     OpenSwath_Scores_Usage su_;
     bool use_ms1_ion_mobility_; ///< whether to use MS1 ion mobility extraction in DIA scores
@@ -77,9 +85,11 @@ namespace OpenMS
      * @param rt_normalization_factor Specifies the range of the normalized retention time space
      * @param add_up_spectra How many spectra to add up (default 1)
      * @param spacing_for_spectra_resampling Spacing factor for spectra addition
+     * @param merge_spectra_by_peak_width_fraction Fraction of peak width to construct the number of spectra to add
      * @param drift_extra Extend the extraction window to gain a larger field of view beyond drift_upper - drift_lower (in percent)
      * @param su Which scores to actually compute
      * @param spectrum_addition_method Method to use for spectrum addition (valid: "simple", "resample")
+     * @param spectrum_merge_method_type Type of method to use for spectrum addition. (valid: "fixed", "dynamic")
      * @param use_ms1_ion_mobility Use MS1 ion mobility extraction in DIA scores
      * @param apply_im_peak_picking Apply peak picking on ion mobilograms
      *
@@ -87,9 +97,11 @@ namespace OpenMS
     void initialize(double rt_normalization_factor,
                     int add_up_spectra,
                     double spacing_for_spectra_resampling,
+                    double merge_spectra_by_peak_width_fraction,
                     const double drift_extra,
                     const OpenSwath_Scores_Usage & su,
                     const std::string& spectrum_addition_method,
+                    const std::string& spectrum_merge_method_type,
                     bool use_ms1_ion_mobility,
                     bool apply_im_peak_picking);
 
