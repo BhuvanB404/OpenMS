@@ -242,6 +242,7 @@ private:
      * @param swath_maps Optional SWATH-MS (DIA) map corresponding from which
      *                  the chromatograms were extracted. Use empty map if no
      *                  data is available.
+     * @param drift_target The target drift value
      * @return a struct of type OpenSwath_Ind_Scores containing either target or decoy values
     */
     OpenSwath_Ind_Scores scoreIdentification_(MRMTransitionGroupType& transition_group_identification,

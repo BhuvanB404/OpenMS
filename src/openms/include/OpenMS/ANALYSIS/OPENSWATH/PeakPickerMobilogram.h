@@ -79,15 +79,11 @@ namespace OpenMS
 
         /**
             @brief  Filters a vector of mobilograms for the highest peak based on the picked mobilogram
-
-            @return A PeakPositions object containing the left, apex, and right positions of the highest peak in the mobilograms
         */
         void filterTopPeak(Mobilogram& picked_mobilogram, std::vector<Mobilogram>& mobilograms, PeakPositions& peak_pos);
 
         /**
             @brief  Filters a single mobilogram for the highest peak based on the picked mobilogram
-
-            @return A PeakPositions object containing the left, apex, and right positions of the highest peak in the mobilogram
         */
         void filterTopPeak(Mobilogram& picked_mobilogram, Mobilogram& mobilogram, PeakPositions& peak_pos);
 
@@ -179,7 +175,7 @@ namespace OpenMS
         /**
            @brief Helper function to convert OpenMS IntegerDataArray to a vector of std::size
 
-            @param[in] integerDataArray A const reference to an IntegerDataArray object
+            @param[in] floatDataArray A const reference to an FloatDataArray object
             @return A vector of std::size containing the values from the IntegerDataArray
         */
         static std::vector<std::size_t> extractIntValues_(const OpenMS::DataArrays::FloatDataArray& floatDataArray);
