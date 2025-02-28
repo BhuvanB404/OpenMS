@@ -29,8 +29,13 @@ cdef extern from "<OpenMS/ANALYSIS/OPENSWATH/OpenSwathScoring.h>" namespace "Ope
                 #  :param rt_normalization_factor: Specifies the range of the normalized retention time space
                 #  :param add_up_spectra: How many spectra to add up (default 1)
                 #  :param spacing_for_spectra_resampling: Spacing factor for spectra addition
+                #  :param merge_spectra_by_peak_width_fraction: Fraction of peak width to construct the number of spectra to add
+                #  :param drift_extra: Extend the extraction window to gain a larger field of view beyond drift_upper - drift_lower (in percent)
                 #  :param su: Which scores to actually compute
                 #  :param spectrum_addition_method: Method to use for spectrum addition (valid: "simple", "resample")
+                #  :param spectrum_merge_method_type: Type of method to use for spectrum addition. (valid: "fixed", "dynamic")
+                #  :param use_ms1_ion_mobility: Use MS1 ion mobility extraction in DIA scores
+                #  :param apply_im_peak_picking: Apply peak picking to the  extracted ion mobilograms
 
         # void calculateChromatographicScores(
         #      OpenSwath::IMRMFeature* imrmfeature,
