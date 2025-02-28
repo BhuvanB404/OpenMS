@@ -10,6 +10,7 @@
 
 #include <OpenMS/CONCEPT/Macros.h>
 #include <OpenMS/CONCEPT/LogStream.h>
+#include <OpenMS/CONCEPT/LogStream.h>
 
 // scoring
 #include <OpenMS/ANALYSIS/OPENSWATH/OpenSwathScores.h>
@@ -49,7 +50,8 @@ namespace OpenMS
                                     const OpenSwath_Scores_Usage & su,
                                     const std::string& spectrum_addition_method,
                                     const std::string& spectrum_merge_method_type,
-                                    bool use_ms1_ion_mobility)
+                                    bool use_ms1_ion_mobility,
+                                    bool apply_im_peak_picking)
   {
     this->rt_normalization_factor_ = rt_normalization_factor;
     this->add_up_spectra_ = add_up_spectra;
@@ -84,6 +86,7 @@ namespace OpenMS
     this->merge_spectra_by_peak_width_fraction_ = merge_spectra_by_peak_width_fraction;
     this->su_ = su;
     this->use_ms1_ion_mobility_ = use_ms1_ion_mobility;
+    this->apply_im_peak_picking_ = apply_im_peak_picking;
   }
 
   void OpenSwathScoring::calculateDIAScores(OpenSwath::IMRMFeature* imrmfeature,
@@ -138,7 +141,7 @@ namespace OpenMS
       IonMobilityScoring::driftScoring(spectra, transitions, scores,
                                        drift_target, im_range,
                                        dia_extract_window_, dia_extraction_ppm_,
-                                       false, im_drift_extra_pcnt_);
+                                       im_drift_extra_pcnt_, apply_im_peak_picking_);
     }
 
 
@@ -200,7 +203,7 @@ namespace OpenMS
 
         std::vector<OpenSwath::SpectrumPtr> ms1_spectrum = fetchSpectrumSwath(ms1_map, rt, n_merge_spectra, im_range_ms1);
         IonMobilityScoring::driftScoringMS1(ms1_spectrum,
-            transitions, scores, drift_target, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, false, im_drift_extra_pcnt_);
+            transitions, scores, drift_target, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, im_drift_extra_pcnt_);
 
         IonMobilityScoring::driftScoringMS1Contrast(spectra, ms1_spectrum,
             transitions, scores, im_range_ms1, dia_extract_window_, dia_extraction_ppm_, im_drift_extra_pcnt_);
@@ -277,18 +280,15 @@ namespace OpenMS
 
   void OpenSwathScoring::calculateDIAIdScores(OpenSwath::IMRMFeature* imrmfeature,
                                               const TransitionType & transition,
+                                              MRMTransitionGroupType& trgr_detect,
                                               const std::vector<OpenSwath::SwathMap>& swath_maps,
                                               RangeMobility& im_range,
                                               const OpenMS::DIAScoring & diascoring,
-                                              OpenSwath_Scores & scores)
+                                              OpenSwath_Scores & scores,
+                                              const double drift_target)
   {
     OPENMS_PRECONDITION(imrmfeature != nullptr, "Feature to be scored cannot be null");
     OPENMS_PRECONDITION(swath_maps.size() > 0, "There needs to be at least one swath map.");
-
-    if (!use_ms1_ion_mobility_)
-    {
-      im_range.clear();
-    }
 
     // automatically compute the amount of spectra to add based on the fraction of the retention time peak width, or add a fixed number of spectra
     int n_merge_spectra = 1;
@@ -331,6 +331,26 @@ namespace OpenMS
                                                 scores.isotope_overlap);
     // Mass deviation score
     diascoring.dia_ms1_massdiff_score(transition.getProductMZ(), spectrum, im_range, scores.massdev_score);
+
+    // Drift Scoring for Identification transitions
+    if (su_.use_im_scores)
+    {
+      OPENMS_LOG_DEBUG << "Computing IM scores for identification transition: " << transition.transition_name << " with product mz " << transition.getProductMZ() << " and precursor mz " << transition.getPrecursorMZ() << std::endl;
+
+      // Temporary vector container for storing transition to match rest of code.
+      std::vector<TransitionType> transitionVector;
+
+      // Add the existing transition to the vector
+      transitionVector.push_back(transition);
+
+      double dia_extract_window_ = (double)diascoring.getParameters().getValue("dia_extraction_window");
+      bool dia_extraction_ppm_ = diascoring.getParameters().getValue("dia_extraction_unit") == "ppm";
+
+      IonMobilityScoring::driftIdScoring(spectrum, transitionVector, trgr_detect, scores,
+                                       drift_target, im_range,
+                                       dia_extract_window_, dia_extraction_ppm_,
+                                       im_drift_extra_pcnt_, apply_im_peak_picking_);
+    }
   }
 
   void OpenSwathScoring::calculateChromatographicScores(
