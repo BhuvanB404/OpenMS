@@ -185,6 +185,12 @@ void convertINI2HTML(const Param& p, ostream& os)
 
 bool generate(const ToolListType& tools, const String& prefix, const String& binary_directory)
 {
+  // Add an environment variable (used by each TOPP tool to determine width of help text (see TOPPBase))
+  qputenv("COLUMNS", "110"); 
+  // Add Global environment variable to suppress stty errors
+  qputenv("TERM", "dumb");
+  qputenv("STTY", "/bin/true"); 
+  
   bool errors_occured = false;
   for (ToolListType::const_iterator it = tools.begin(); it != tools.end(); ++it)
   {
@@ -192,10 +198,6 @@ bool generate(const ToolListType& tools, const String& prefix, const String& bin
     QProcess process;
     process.setProcessChannelMode(QProcess::MergedChannels);
     QStringList env = QProcess::systemEnvironment();
-    qputenv("COLUMNS", "110"); // Add an environment variable (used by each TOPP tool to determine width of help text (see TOPPBase))
-    // Add Global environment variable to suppress stty errors
-    qputenv("TERM", "dumb");
-    qputenv("STTY", "/bin/true"); 
 
     String command = binary_directory + it->first;
 #if defined(__APPLE__)
