@@ -192,8 +192,10 @@ bool generate(const ToolListType& tools, const String& prefix, const String& bin
     QProcess process;
     process.setProcessChannelMode(QProcess::MergedChannels);
     QStringList env = QProcess::systemEnvironment();
-    env << String("COLUMNS=110").toQString(); // Add an environment variable (used by each TOPP tool to determine width of help text (see TOPPBase))
-    process.setEnvironment(env);
+    qputenv("COLUMNS", "110"); // Add an environment variable (used by each TOPP tool to determine width of help text (see TOPPBase))
+    // Add Global environment variable to suppress stty errors
+    qputenv("TERM", "dumb");
+    qputenv("STTY", "/bin/true"); 
 
     String command = binary_directory + it->first;
 #if defined(__APPLE__)
