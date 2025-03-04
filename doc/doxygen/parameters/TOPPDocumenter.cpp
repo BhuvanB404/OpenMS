@@ -14,8 +14,6 @@
 #include <OpenMS/FORMAT/ParamXMLFile.h>
 #include <OpenMS/SYSTEM/ExternalProcess.h>
 
-#include <QtCore/QProcess>
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
