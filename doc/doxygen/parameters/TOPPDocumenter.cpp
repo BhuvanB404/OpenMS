@@ -194,11 +194,6 @@ bool generate(const ToolListType& tools, const String& prefix, const String& bin
   bool errors_occured = false;
   for (ToolListType::const_iterator it = tools.begin(); it != tools.end(); ++it)
   {
-    //start process
-    QProcess process;
-    process.setProcessChannelMode(QProcess::MergedChannels);
-    QStringList env = QProcess::systemEnvironment();
-
     String command = binary_directory + it->first;
 #if defined(__APPLE__)
     if (it->first == "TOPPView" || it->first == "TOPPAS")
