@@ -37,6 +37,13 @@ Initiative (PSI) formats for MS data. The main contributors of OpenMS are
 currently the Eberhard-Karls-Universität in Tübingen, the Freie Universität
 Berlin, and the ETH Zürich.
 
+Table of Contents
+--------
+- [Features](#features)
+- [Documentation](#documentation)
+- [Building OpenMS](#building-openms)
+- [Citation](#citation)
+
 Features
 --------
 - Core C++ library under three-clause BSD licence using modern C++20
@@ -69,9 +76,9 @@ Building OpenMS
 
 For developers who want to build OpenMS from source:
 
-1. [Build on Linux](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_linux.html) - Build instructions for Linux.
-2. [Build on Windows](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_win.html) - Build instructions for Windows.
-3. [Build on mac](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_mac.html) - Build instructions for Mac.
+- [Build on Linux](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_linux.html) - Build instructions for Linux.
+- [Build on Windows](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_win.html) - Build instructions for Windows.
+- [Build on macOS](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_mac.html) - Build instructions for macOS.
 
 For more detailed instructions, see the [Developer Tutorial](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/developer_tutorial.html).
 
@@ -82,7 +89,3 @@ Please cite:
 Pfeuffer, J., Bielow, C., Wein, S. et al. OpenMS 3 enables reproducible analysis of large-scale mass spectrometry data, Nat Methods 21, 365–367 (2024). https://doi.org/10.1038/s41592-024-02197-7
 
 The file [AUTHORS](AUTHORS) contains a list of all authors who worked on OpenMS.
-
-Licence
--------
-OpenMS is released under the [three clause BSD licence](LICENSE).
