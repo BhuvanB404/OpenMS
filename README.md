@@ -64,6 +64,17 @@ The OpenMS API reference has several endpoints:
 
 Documentation for the Python bindings pyOpenMS can be found on the [pyOpenMS online documentation](https://pyopenms.readthedocs.io).
 
+Building OpenMS
+--------
+
+For developers who want to build OpenMS from source:
+
+1. [Build on Linux](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_linux.html) - Build instructions for Linux.
+2. [Build on Windows](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_win.html) - Build instructions for Windows.
+3. [Build on mac](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/install_mac.html) - Build instructions for Mac.
+
+For more detailed instructions, see the [Developer Tutorial](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/developer_tutorial.html).
+
 Citation
 --------
 Please cite:
