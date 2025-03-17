@@ -28,7 +28,7 @@ quantitation, SILAC, iTRAQ, TMT, SRM, SWATH, etc.
 It provides built-in algorithms for de-novo identification and database search,
 as well as adapters to other state-of-the art tools like X!Tandem, Mascot,
 Comet, etc. It supports easy integration of OpenMS built tools into workflow
-engines like KNIME, Galaxy, WS-Pgrade, and TOPPAS via the TOPPtools concept and
+engines like nextflow, KNIME, Galaxy, and TOPPAS via the TOPPTools concept and
 a unified parameter handling via a 'common tool description' (CTD) scheme.
 
 With pyOpenMS, OpenMS offers Python bindings to a large part of the OpenMS API
@@ -51,16 +51,16 @@ Features
 - Major community file formats supported (mzML, mzXML, mzIdentXML, pepXML, mzTab, etc.)
 - Over 150+ individual analysis tools (TOPP Tools), covering most MS and LC-MS data processing and mining tasks
 - Powerful 1D, 2D and 3D visualization tools (TOPPView)
-- Support for most MS identification and quantification workflows (targeted, DIA, label-free, isobaric and stable isotope)
-- Support for all major platforms (Windows [XP, 7, 8, 10], macOS and Linux)
+- Support for most MS identification and quantification workflows (targeted, DIA, label-free, isobaric and stable isotope labelled)
+- Support for all major platforms (Windows [10, 11], macOS and Linux)
 
 Documentation
 -------------
 
-Users and developers should start by reading the [OpenMS documentation](https://openms.readthedocs.io/en/latest). OpenMS
-API reference documentation and advanced developer doxygen documentation can be browsed [here](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/index.html).
+Users and developers should start by reading the [OpenMS documentation](https://openms.readthedocs.io/en/latest) on ReadTheDocs (RTD).
+The OpenMS API reference and advanced developer doxygen documentation can be browsed [here](https://abibuilder.cs.uni-tuebingen.de/archive/openms/Documentation/release/latest/html/index.html).
 
-openms.readthedocs.io documentation aims at being an entry point for users and developers alike. It is trying to be mostly version-independent and therefore
+The OpenMS RTD documentation aims at being an entry point for users and developers alike. It is trying to be mostly version-independent and therefore
 only consists of one main branch. We may introduce tags for older releases in the future.
 
 The OpenMS API reference has several endpoints:
