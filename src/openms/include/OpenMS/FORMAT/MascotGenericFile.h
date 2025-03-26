@@ -309,7 +309,7 @@ protected:
               try 
               {
                 int ms_level = tmp.toInt();
-                spectrum.setMSLevel(ms_level); // Directly set MS level
+                spectrum.setMSLevel(ms_level); 
               }
               catch (Exception::ConversionError& /*e*/)
               {
